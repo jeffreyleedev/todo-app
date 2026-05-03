@@ -1,0 +1,243 @@
+@import 'tailwindcss';
+
+/* Enable class-based dark mode (.dark on <html>) */
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Colors - Luminous Productivity Palette */
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #464554;
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-outline: #767586;
+  --color-outline-variant: #c7c4d7;
+  --color-surface-tint: #494bd6;
+  --color-primary: #4648d4;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #6063ee;
+  --color-on-primary-container: #fffbff;
+  --color-inverse-primary: #c0c1ff;
+  --color-secondary: #5c5f61;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #e0e3e5;
+  --color-on-secondary-container: #626567;
+  --color-tertiary: #904900;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #b55d00;
+  --color-on-tertiary-container: #fffbff;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed: #e1e0ff;
+  --color-primary-fixed-dim: #c0c1ff;
+  --color-on-primary-fixed: #07006c;
+  --color-on-primary-fixed-variant: #2f2ebe;
+  --color-secondary-fixed: #e0e3e5;
+  --color-secondary-fixed-dim: #c4c7c9;
+  --color-on-secondary-fixed: #191c1e;
+  --color-on-secondary-fixed-variant: #444749;
+  --color-tertiary-fixed: #ffdcc5;
+  --color-tertiary-fixed-dim: #ffb783;
+  --color-on-tertiary-fixed: #301400;
+  --color-on-tertiary-fixed-variant: #703700;
+  --color-background: #f8f9ff;
+  --color-on-background: #0b1c30;
+  --color-surface-variant: #d3e4fe;
+
+  /* Spacing - Strict 8px base */
+  --spacing-xs: 4px;
+  --spacing-base: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 24px;
+  --spacing-lg: 40px;
+  --spacing-xl: 64px;
+  --spacing-gutter: 24px;
+  --spacing-margin: 32px;
+
+  /* Border Radius - DESIGN.md Specs */
+  --radius-sm: 0.25rem;
+  --radius-DEFAULT: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+
+  /* Shadows - Ambient & Soft */
+  --shadow-card: 0 4px 20px rgba(70, 72, 212, 0.06);
+  --shadow-raised: 0 8px 16px rgba(70, 72, 212, 0.1);
+  --shadow-overlay: 0 10px 30px rgba(70, 72, 212, 0.12);
+}
+
+/* Base resets and font enforcement */
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-on-background);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-family-sans);
+    letter-spacing: 0;
+  }
+
+  /* Ensure Material Symbols use their own font family */
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 300,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+/* Semantic Typography Classes - Refined for "Tucked-in" Headline look */
+.font-headline-lg {
+  font-size: 32px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.font-headline-md {
+  font-size: 24px;
+  line-height: 1.33;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.font-headline-sm {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.font-body-lg {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 400;
+}
+
+.font-body-md {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.font-body-sm {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.font-label-md {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.font-label-sm {
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 500;
+}
+
+/* ─── Dark Mode Token Overrides ────────────────────────────────────────────── */
+/* Redefine every semantic color variable so all token-based utilities
+   (bg-surface, text-on-surface, etc.) automatically adapt — no dark: prefixes
+   needed on individual components.                                             */
+.dark {
+  /* Surfaces */
+  --color-background: #0f1720;
+  --color-surface: #0f1720;
+  --color-surface-dim: #090e18;
+  --color-surface-bright: #1c2a3a;
+  --color-surface-container-lowest: #09111a;
+  --color-surface-container-low: #131d2b;
+  --color-surface-container: #182436;
+  --color-surface-container-high: #1e2d42;
+  --color-surface-container-highest: #253650;
+  --color-surface-variant: #46455a;
+
+  /* On-surfaces */
+  --color-on-background: #d9e8ff;
+  --color-on-surface: #d9e8ff;
+  --color-on-surface-variant: #c5c3d8;
+  --color-inverse-surface: #d9e8ff;
+  --color-inverse-on-surface: #0b1c30;
+
+  /* Outlines */
+  --color-outline: #8f8da2;
+  --color-outline-variant: #46455a;
+
+  /* Primary */
+  --color-primary: #bfc0ff;
+  --color-on-primary: #1a1c8e;
+  --color-primary-container: #3133b8;
+  --color-on-primary-container: #e1e0ff;
+  --color-inverse-primary: #4648d4;
+  --color-surface-tint: #bfc0ff;
+  --color-primary-fixed: #e1e0ff;
+  --color-primary-fixed-dim: #bfc0ff;
+  --color-on-primary-fixed: #07006c;
+  --color-on-primary-fixed-variant: #2f2ebe;
+
+  /* Secondary */
+  --color-secondary: #c6c9cb;
+  --color-on-secondary: #2d3133;
+  --color-secondary-container: #444748;
+  --color-on-secondary-container: #e2e5e7;
+  --color-secondary-fixed: #e0e3e5;
+  --color-secondary-fixed-dim: #c4c7c9;
+  --color-on-secondary-fixed: #191c1e;
+  --color-on-secondary-fixed-variant: #444749;
+
+  /* Tertiary */
+  --color-tertiary: #ffb784;
+  --color-on-tertiary: #4d2600;
+  --color-tertiary-container: #6e3700;
+  --color-on-tertiary-container: #ffdcc5;
+  --color-tertiary-fixed: #ffdcc5;
+  --color-tertiary-fixed-dim: #ffb783;
+  --color-on-tertiary-fixed: #301400;
+  --color-on-tertiary-fixed-variant: #703700;
+
+  /* Error */
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+
+  /* Shadows — deeper on dark backgrounds */
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-overlay: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
