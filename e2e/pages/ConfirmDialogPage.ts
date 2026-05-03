@@ -11,6 +11,5 @@ export class ConfirmDialogPage {
   getCancelButton = (): Locator =>
     this.page.getByTestId('confirm-dialog-cancel');
 
-  getCloseButton = (): Locator =>
-    this.page.getByTestId('confirm-dialog-close');
+  getCloseButton = (): Locator => this.page.getByTestId('confirm-dialog-close');
 }

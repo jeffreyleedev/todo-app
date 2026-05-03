@@ -436,7 +436,9 @@ test.describe('Todo App', () => {
     // Drag Active B above Active A — completed items should stay in their section
     await todoPage.dragTodoAbove('Active B', 'Active A');
 
-    const texts = await todoPage.page.getByTestId('todo-text').allTextContents();
+    const texts = await todoPage.page
+      .getByTestId('todo-text')
+      .allTextContents();
     expect(texts.slice(0, 2)).toEqual(['Active B', 'Active A']);
     expect(texts[2]).toBe('Done C');
   });

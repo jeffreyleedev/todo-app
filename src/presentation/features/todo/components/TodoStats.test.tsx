@@ -113,11 +113,7 @@ describe('TodoStats', () => {
 
   it('should delete all todos after confirmation', () => {
     useTodoStore.setState({
-      todos: [
-        createTodo('Task 1'),
-        createTodo('Task 2'),
-        createTodo('Task 3'),
-      ],
+      todos: [createTodo('Task 1'), createTodo('Task 2'), createTodo('Task 3')],
     });
 
     render(<TodoStats />);
