@@ -206,6 +206,16 @@ test.describe('Todo App', () => {
     await expect(todoPage.getTodoText('Task 3')).not.toBeVisible();
   });
 
+  test('should hide Delete all when all todos are completed on the All filter', async ({
+    todoPage,
+  }) => {
+    await todoPage.addTodo('Task');
+    await todoPage.toggleTodo('Task');
+
+    await expect(todoPage.getDeleteAllButton()).not.toBeVisible();
+    await expect(todoPage.getClearCompletedButton()).toBeVisible();
+  });
+
   test('should display singular "item" for exactly one active todo', async ({
     todoPage,
   }) => {
