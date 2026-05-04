@@ -465,6 +465,116 @@ test.describe('Todo App', () => {
     await expect(dialog).toHaveAttribute('aria-modal', 'true');
   });
 
+  test.describe('Edit', () => {
+    test('should edit an active todo via double-click and Enter', async ({
+      todoPage,
+    }) => {
+      await todoPage.addTodo('Original text');
+      await todoPage.editTodo('Original text', 'Updated text');
+
+      await expect(todoPage.getTodoText('Updated text')).toBeVisible();
+      await expect(todoPage.getTodoItem('Original text')).toHaveCount(0);
+    });
+
+    test('should cancel edit via Escape', async ({ todoPage }) => {
+      await todoPage.addTodo('Keep me');
+      await todoPage.cancelEdit('Keep me', 'Changed');
+
+      await expect(todoPage.getTodoText('Keep me')).toBeVisible();
+      await expect(todoPage.getTodoText('Keep me')).toHaveText('Keep me');
+    });
+
+    test('should save edit via blur', async ({ todoPage }) => {
+      await todoPage.addTodo('Blur me');
+      await todoPage.getTodoText('Blur me').dblclick();
+      await todoPage.getTodoEditInput().fill('Saved on blur');
+      await todoPage.getTodoEditInput().blur();
+
+      await expect(todoPage.getTodoText('Saved on blur')).toBeVisible();
+    });
+
+    test('should not edit a completed todo', async ({ todoPage }) => {
+      await todoPage.addTodo('Completed');
+      await todoPage.toggleTodo('Completed');
+
+      await todoPage.getTodoText('Completed').dblclick();
+
+      await expect(todoPage.getTodoEditInput()).not.toBeAttached();
+    });
+
+    test('should not allow entering more than 100 characters', async ({
+      todoPage,
+    }) => {
+      await todoPage.addTodo('Short');
+
+      await todoPage.getTodoText('Short').dblclick();
+      const input = todoPage.getTodoEditInput();
+      await input.fill('a'.repeat(105));
+
+      await expect(input).toHaveValue('a'.repeat(100));
+    });
+
+    test('should not save empty text', async ({ todoPage }) => {
+      await todoPage.addTodo('Not empty');
+
+      await todoPage.getTodoText('Not empty').dblclick();
+      const input = todoPage.getTodoEditInput();
+      await input.fill('');
+      await input.press('Enter');
+
+      await expect(input).toBeAttached();
+      await expect(input).toHaveValue('');
+    });
+
+    test('should not save duplicate active text', async ({ todoPage }) => {
+      await todoPage.addTodo('Existing');
+      await todoPage.addTodo('Edit me');
+
+      await todoPage.getTodoText('Edit me').dblclick();
+      const input = todoPage.getTodoEditInput();
+      await input.fill('Existing');
+      await input.press('Enter');
+
+      await expect(input).toBeAttached();
+      await expect(input).toHaveValue('Existing');
+    });
+
+    test('should persist edited todo on reload', async ({ page, todoPage }) => {
+      await todoPage.addTodo('Persist edit');
+      await todoPage.editTodo('Persist edit', 'Edited');
+
+      await page.reload();
+
+      await expect(todoPage.getTodoText('Edited')).toBeVisible();
+    });
+
+    test('should show warning counter near character limit', async ({
+      todoPage,
+    }) => {
+      await todoPage.addTodo('Short');
+
+      await todoPage.getTodoText('Short').dblclick();
+      const input = todoPage.getTodoEditInput();
+      await input.fill('a'.repeat(90));
+
+      await expect(todoPage.getTodoEditCharCounter()).toHaveClass(
+        /text-warning/
+      );
+    });
+
+    test('should show error counter at character limit', async ({
+      todoPage,
+    }) => {
+      await todoPage.addTodo('Short');
+
+      await todoPage.getTodoText('Short').dblclick();
+      const input = todoPage.getTodoEditInput();
+      await input.fill('a'.repeat(100));
+
+      await expect(todoPage.getTodoEditCharCounter()).toHaveClass(/text-error/);
+    });
+  });
+
   test.describe('Priority', () => {
     test('should add a todo without priority', async ({ todoPage }) => {
       await todoPage.addTodo('No priority');

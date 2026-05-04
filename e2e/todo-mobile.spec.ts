@@ -153,6 +153,25 @@ test.describe('Todo App - Mobile Viewport', () => {
     await expect(itemsLeft).toHaveText('1 item left');
   });
 
+  test('should edit an active todo on mobile', async ({ todoPage }) => {
+    await todoPage.addTodo('Mobile edit');
+    await todoPage.editTodo('Mobile edit', 'Edited');
+
+    await expect(todoPage.getTodoText('Edited')).toBeVisible();
+  });
+
+  test('should enforce character limit when editing on mobile', async ({
+    todoPage,
+  }) => {
+    await todoPage.addTodo('Short');
+
+    await todoPage.getTodoText('Short').dblclick();
+    const input = todoPage.getTodoEditInput();
+    await input.fill('a'.repeat(105));
+
+    await expect(input).toHaveValue('a'.repeat(100));
+  });
+
   test('should drag-and-drop reorder on mobile', async ({ todoPage }) => {
     await todoPage.addTodo('Mobile A');
     await todoPage.addTodo('Mobile B');
