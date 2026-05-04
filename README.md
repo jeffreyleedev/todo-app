@@ -32,16 +32,16 @@ Imports use the `@/` alias for the `src/` directory (e.g., `import { cn } from '
 
 ## Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start the dev server |
-| `npm run build` | Typecheck and build |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format with Prettier |
-| `npm run test` | Run unit/component tests (Vitest) |
-| `npm run test:run` | Run tests once (non-watch) |
-| `npm run test:ui` | Run tests with Vitest UI |
-| `npm run test:e2e` | Run E2E tests (Playwright) |
-| `npm run test:e2e:ui` | Run E2E tests with Playwright UI |
-| `npm run preview` | Preview production build |
-| `npm run format:check` | Check formatting with Prettier |
+| Command                | Description                       |
+| ---------------------- | --------------------------------- |
+| `npm run dev`          | Start the dev server              |
+| `npm run build`        | Typecheck and build               |
+| `npm run lint`         | Run ESLint                        |
+| `npm run format`       | Format with Prettier              |
+| `npm run test`         | Run unit/component tests (Vitest) |
+| `npm run test:run`     | Run tests once (non-watch)        |
+| `npm run test:ui`      | Run tests with Vitest UI          |
+| `npm run test:e2e`     | Run E2E tests (Playwright)        |
+| `npm run test:e2e:ui`  | Run E2E tests with Playwright UI  |
+| `npm run preview`      | Preview production build          |
+| `npm run format:check` | Check formatting with Prettier    |
