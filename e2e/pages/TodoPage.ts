@@ -64,6 +64,13 @@ export class TodoPage {
   getDragHandle = (text: string): Locator =>
     this.getTodoItem(text).getByTestId('drag-handle');
 
+  /* Edit Locators */
+
+  getTodoEditInput = (): Locator => this.page.getByTestId('todo-edit-input');
+
+  getTodoEditCharCounter = (): Locator =>
+    this.page.getByTestId('todo-edit-char-counter');
+
   /* Priority Locators */
 
   getPriorityPill = (todoText: string): Locator =>
@@ -139,5 +146,19 @@ export class TodoPage {
       { steps: 10 }
     );
     await this.page.mouse.up();
+  };
+
+  /* Edit Actions */
+
+  editTodo = async (oldText: string, newText: string): Promise<void> => {
+    await this.getTodoText(oldText).dblclick();
+    await this.getTodoEditInput().fill(newText);
+    await this.getTodoEditInput().press('Enter');
+  };
+
+  cancelEdit = async (todoText: string, newText: string): Promise<void> => {
+    await this.getTodoText(todoText).dblclick();
+    await this.getTodoEditInput().fill(newText);
+    await this.getTodoEditInput().press('Escape');
   };
 }

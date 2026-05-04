@@ -21,6 +21,7 @@ interface TodoState {
   toggleTodo: (id: string) => void;
   deleteTodo: (id: string) => void;
   setPriority: (id: string, priority?: Priority) => void;
+  updateTodoText: (id: string, text: string) => void;
   clearCompleted: () => void;
   deleteAll: () => void;
   setFilter: (filter: Filter) => void;
@@ -58,6 +59,12 @@ export const useTodoStore = create<TodoState>((set, get) => ({
     const newTodos = get().todos.map((t) =>
       t.id === id ? { ...t, priority } : t
     );
+    set({ todos: newTodos });
+    repository.save(newTodos);
+  },
+
+  updateTodoText: (id: string, text: string) => {
+    const newTodos = get().todos.map((t) => (t.id === id ? { ...t, text } : t));
     set({ todos: newTodos });
     repository.save(newTodos);
   },
