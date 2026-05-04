@@ -154,7 +154,9 @@ describe('TodoItem', () => {
     useTodoStore.getState().setPriority(prioTodo.id, 'high');
 
     render(<TodoItem todo={useTodoStore.getState().todos[0]} />);
-    expect(screen.getByTestId('priority-pill')).toHaveClass('bg-error-container');
+    expect(screen.getByTestId('priority-pill')).toHaveClass(
+      'bg-error-container'
+    );
   });
 
   it('should apply bg-tertiary-container class for medium priority', () => {

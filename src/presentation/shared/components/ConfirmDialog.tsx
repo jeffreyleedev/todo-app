@@ -46,10 +46,19 @@ export function ConfirmDialog({
           {message}
         </p>
         <div className="flex justify-end gap-sm">
-          <Button variant="ghost" onClick={onCancel} data-testid="confirm-dialog-cancel">
+          <Button
+            variant="ghost"
+            onClick={onCancel}
+            data-testid="confirm-dialog-cancel"
+          >
             Cancel
           </Button>
-          <Button variant="primary" className="bg-error text-on-error hover:bg-error-container" onClick={onConfirm} data-testid="confirm-dialog-confirm">
+          <Button
+            variant="primary"
+            className="bg-error text-on-error hover:bg-error-container"
+            onClick={onConfirm}
+            data-testid="confirm-dialog-confirm"
+          >
             {confirmLabel}
           </Button>
         </div>
