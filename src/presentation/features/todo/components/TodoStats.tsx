@@ -18,7 +18,8 @@ export function TodoStats() {
   const completedCount = countCompleted(todos);
   const showClearCompleted = filter !== 'active' && completedCount > 0;
   const hasOnlyCompleted = activeCount === 0 && completedCount > 0;
-  const showDeleteAll = todos.length > 0 && filter !== 'completed' && !hasOnlyCompleted;
+  const showDeleteAll =
+    todos.length > 0 && filter !== 'completed' && !hasOnlyCompleted;
 
   function handleConfirm() {
     if (confirmAction === 'clear-completed') {
