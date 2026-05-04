@@ -111,6 +111,26 @@ describe('TodoStats', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('should not render Delete all when on All filter with only completed todos', () => {
+    const completed = { ...createTodo('Completed'), completed: true };
+    useTodoStore.setState({ todos: [completed], filter: 'all' });
+
+    render(<TodoStats />);
+    expect(
+      screen.queryByRole('button', { name: /Delete all/i })
+    ).not.toBeInTheDocument();
+  });
+
+  it('should not render Delete all when on Active filter with empty active but completed todos exist', () => {
+    const completed = { ...createTodo('Completed'), completed: true };
+    useTodoStore.setState({ todos: [completed], filter: 'active' });
+
+    render(<TodoStats />);
+    expect(
+      screen.queryByRole('button', { name: /Delete all/i })
+    ).not.toBeInTheDocument();
+  });
+
   it('should delete all todos after confirmation', () => {
     useTodoStore.setState({
       todos: [createTodo('Task 1'), createTodo('Task 2'), createTodo('Task 3')],

@@ -126,6 +126,16 @@ test.describe('Todo App - Mobile Viewport', () => {
     ).toBeVisible();
   });
 
+  test('should hide Delete all when all todos are completed on mobile', async ({
+    todoPage,
+  }) => {
+    await todoPage.addTodo('Task');
+    await todoPage.toggleTodo('Task');
+
+    await expect(todoPage.getDeleteAllButton()).not.toBeVisible();
+    await expect(todoPage.getClearCompletedButton()).toBeVisible();
+  });
+
   test('should cancel confirm dialog on mobile', async ({ todoPage }) => {
     await todoPage.addTodo('Task');
     await todoPage.getDeleteAllButton().click();
