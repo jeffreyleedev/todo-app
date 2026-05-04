@@ -43,9 +43,16 @@ export function toggleTodo(todo: Todo): Todo {
   };
 }
 
-export function isDuplicateTodo(text: string, todos: Todo[]): boolean {
+export function isDuplicateTodo(
+  text: string,
+  todos: Todo[],
+  excludeId?: string
+): boolean {
   const normalized = text.trim().toLowerCase();
   return todos.some(
-    (todo) => !todo.completed && todo.text.toLowerCase() === normalized
+    (todo) =>
+      !todo.completed &&
+      todo.id !== excludeId &&
+      todo.text.toLowerCase() === normalized
   );
 }

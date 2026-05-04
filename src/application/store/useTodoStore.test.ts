@@ -201,6 +201,40 @@ describe('useTodoStore', () => {
     });
   });
 
+  describe('updateTodoText', () => {
+    it('should update the text of an existing todo', () => {
+      useTodoStore.getState().addTodo('Old text');
+      const id = useTodoStore.getState().todos[0].id;
+      mockSave.mockClear();
+
+      useTodoStore.getState().updateTodoText(id, 'New text');
+
+      expect(useTodoStore.getState().todos[0].text).toBe('New text');
+      expect(mockSave).toHaveBeenCalledWith(useTodoStore.getState().todos);
+    });
+
+    it('should be a no-op when the id does not exist', () => {
+      useTodoStore.getState().addTodo('Test');
+      mockSave.mockClear();
+
+      useTodoStore.getState().updateTodoText('nonexistent', 'New text');
+
+      expect(useTodoStore.getState().todos[0].text).toBe('Test');
+      expect(mockSave).toHaveBeenCalledWith(useTodoStore.getState().todos);
+    });
+
+    it('should persist text change via repository', () => {
+      useTodoStore.getState().addTodo('Persist me');
+      const id = useTodoStore.getState().todos[0].id;
+      mockSave.mockClear();
+
+      useTodoStore.getState().updateTodoText(id, 'Updated');
+
+      expect(mockSave).toHaveBeenCalledTimes(1);
+      expect(mockSave).toHaveBeenCalledWith(useTodoStore.getState().todos);
+    });
+  });
+
   describe('getActiveCount selector', () => {
     it('should return 0 when there are no todos', () => {
       expect(useTodoStore.getState().getActiveCount()).toBe(0);
