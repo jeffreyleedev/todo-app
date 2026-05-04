@@ -214,6 +214,130 @@ describe('TodoItem', () => {
     expect(deleteSpy).toHaveBeenCalledWith(todo.id);
   });
 
+  describe('edit mode', () => {
+    beforeEach(() => {
+      vi.restoreAllMocks();
+      useTodoStore.setState({ todos: [todo] });
+    });
+
+    it('should enter edit mode on double-click for active todos', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+
+      expect(screen.getByTestId('todo-edit-input')).toBeInTheDocument();
+      expect(screen.getByTestId('todo-edit-input')).toHaveValue('Test Todo');
+    });
+
+    it('should save edit on Enter key', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+      const input = screen.getByTestId('todo-edit-input');
+      fireEvent.change(input, { target: { value: 'Updated Todo' } });
+      fireEvent.keyDown(input, { key: 'Enter' });
+
+      expect(useTodoStore.getState().todos[0].text).toBe('Updated Todo');
+      expect(screen.queryByTestId('todo-edit-input')).not.toBeInTheDocument();
+    });
+
+    it('should cancel edit on Escape key', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+      const input = screen.getByTestId('todo-edit-input');
+      fireEvent.change(input, { target: { value: 'Changed' } });
+      fireEvent.keyDown(input, { key: 'Escape' });
+
+      expect(useTodoStore.getState().todos[0].text).toBe('Test Todo');
+      expect(screen.queryByTestId('todo-edit-input')).not.toBeInTheDocument();
+    });
+
+    it('should save edit on blur', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+      const input = screen.getByTestId('todo-edit-input');
+      fireEvent.change(input, { target: { value: 'Blur saved' } });
+      fireEvent.blur(input);
+
+      expect(useTodoStore.getState().todos[0].text).toBe('Blur saved');
+    });
+
+    it('should not save empty trimmed text', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+      const input = screen.getByTestId('todo-edit-input');
+      fireEvent.change(input, { target: { value: '   ' } });
+      fireEvent.keyDown(input, { key: 'Enter' });
+
+      expect(useTodoStore.getState().todos[0].text).toBe('Test Todo');
+      expect(screen.getByTestId('todo-edit-input')).toBeInTheDocument();
+    });
+
+    it('should not save duplicate text', () => {
+      const duplicate = createTodo('Existing');
+      useTodoStore.setState({ todos: [todo, duplicate] });
+
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+      const input = screen.getByTestId('todo-edit-input');
+      fireEvent.change(input, { target: { value: 'Existing' } });
+      fireEvent.keyDown(input, { key: 'Enter' });
+
+      expect(useTodoStore.getState().todos[0].text).toBe('Test Todo');
+      expect(screen.getByTestId('todo-edit-input')).toBeInTheDocument();
+    });
+
+    it('should not enter edit mode for completed todos', () => {
+      const completedTodo = createTodo('Done');
+      useTodoStore.setState({ todos: [completedTodo] });
+      useTodoStore.getState().toggleTodo(completedTodo.id);
+
+      render(<TodoItem todo={useTodoStore.getState().todos[0]} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+
+      expect(screen.queryByTestId('todo-edit-input')).not.toBeInTheDocument();
+    });
+
+    it('should show character counter while editing', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+
+      const counter = screen.getByTestId('todo-edit-char-counter');
+      expect(counter).toBeInTheDocument();
+      expect(counter).toHaveTextContent('9 / 100');
+    });
+
+    it('should show warning color on character counter near limit', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+      const input = screen.getByTestId('todo-edit-input');
+      fireEvent.change(input, { target: { value: 'a'.repeat(90) } });
+
+      expect(screen.getByTestId('todo-edit-char-counter')).toHaveClass(
+        'text-warning'
+      );
+    });
+
+    it('should show error color on character counter at limit', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+      const input = screen.getByTestId('todo-edit-input');
+      fireEvent.change(input, { target: { value: 'a'.repeat(100) } });
+
+      expect(screen.getByTestId('todo-edit-char-counter')).toHaveClass(
+        'text-error'
+      );
+    });
+  });
+
   it('should apply transform style when transform is set', () => {
     // @ts-expect-error - partial mock for useSortable
     vi.mocked(useSortable).mockReturnValueOnce({

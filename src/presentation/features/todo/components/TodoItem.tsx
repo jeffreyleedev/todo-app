@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import type { Todo, Priority } from '@/domain';
 import { useTodoStore } from '@/application';
 import { IconButton } from '@/presentation/shared/components/IconButton';
@@ -5,7 +6,7 @@ import { Icon } from '@/presentation/shared/components/Icon';
 import { cn } from '@/presentation/shared/utils/cn';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { nextPriority } from '@/domain';
+import { nextPriority, TODO_MAX_LENGTH, isDuplicateTodo } from '@/domain';
 
 interface TodoItemProps {
   todo: Todo;
@@ -21,6 +22,52 @@ export function TodoItem({ todo }: TodoItemProps) {
   const toggleTodo = useTodoStore((state) => state.toggleTodo);
   const deleteTodo = useTodoStore((state) => state.deleteTodo);
   const setPriority = useTodoStore((state) => state.setPriority);
+  const updateTodoText = useTodoStore((state) => state.updateTodoText);
+  const todos = useTodoStore((state) => state.todos);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState('');
+  const editInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && editInputRef.current) {
+      editInputRef.current.focus();
+      editInputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleDoubleClick = () => {
+    if (todo.completed) return;
+    setEditText(todo.text);
+    setIsEditing(true);
+  };
+
+  const saveEdit = () => {
+    const trimmed = editText.trim();
+    if (
+      trimmed &&
+      trimmed.length <= TODO_MAX_LENGTH &&
+      !isDuplicateTodo(trimmed, todos, todo.id)
+    ) {
+      updateTodoText(todo.id, trimmed);
+      setIsEditing(false);
+    }
+  };
+
+  const cancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveEdit();
+    } else if (e.key === 'Escape') {
+      cancelEdit();
+    }
+  };
+
+  const isNearLimit = editText.length >= TODO_MAX_LENGTH * 0.9;
+  const isAtLimit = editText.length >= TODO_MAX_LENGTH;
 
   const {
     attributes,
@@ -54,8 +101,8 @@ export function TodoItem({ todo }: TodoItemProps) {
       >
         <Icon name="drag_indicator" className="text-[20px]" />
       </div>
-      <label className="flex items-center gap-sm cursor-pointer w-full ml-sm">
-        <div className="relative flex items-center justify-center w-[20px] h-[20px] shrink-0">
+      <div className="flex items-center gap-sm w-full ml-sm">
+        <label className="relative flex items-center justify-center w-[20px] h-[20px] shrink-0 cursor-pointer">
           <input
             type="checkbox"
             data-testid="todo-checkbox"
@@ -68,17 +115,49 @@ export function TodoItem({ todo }: TodoItemProps) {
             data-testid="todo-check-icon"
             className="absolute text-on-primary text-[14px] opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
           />
-        </div>
-        <span
-          data-testid="todo-text"
-          className={cn(
-            'font-body-md text-on-surface flex-1 transition-colors duration-200 break-all',
-            todo.completed && 'line-through text-on-surface-variant opacity-70'
-          )}
-        >
-          {todo.text}
-        </span>
-      </label>
+        </label>
+        {isEditing ? (
+          <div className="flex-1 flex flex-col gap-0.5">
+            <input
+              ref={editInputRef}
+              type="text"
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={saveEdit}
+              maxLength={TODO_MAX_LENGTH}
+              data-testid="todo-edit-input"
+              className="w-full bg-surface-bright py-0.5 px-1 rounded border border-primary font-body-md text-on-surface outline-none"
+            />
+            <div
+              data-testid="todo-edit-char-counter"
+              className={cn(
+                'text-xs text-right shrink-0',
+                isAtLimit
+                  ? 'text-error'
+                  : isNearLimit
+                    ? 'text-warning'
+                    : 'text-outline'
+              )}
+            >
+              {editText.length} / {TODO_MAX_LENGTH}
+            </div>
+          </div>
+        ) : (
+          <span
+            data-testid="todo-text"
+            onDoubleClick={handleDoubleClick}
+            className={cn(
+              'font-body-md text-on-surface flex-1 transition-colors duration-200 break-all',
+              !todo.completed && 'cursor-text',
+              todo.completed &&
+                'line-through text-on-surface-variant opacity-70'
+            )}
+          >
+            {todo.text}
+          </span>
+        )}
+      </div>
       <div className="flex items-center gap-sm">
         {!todo.completed &&
           (todo.priority ? (
