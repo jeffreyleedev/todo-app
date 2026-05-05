@@ -167,7 +167,7 @@ test.describe('Todo App - Mobile Viewport', () => {
 
     await todoPage.getTodoText('Short').dblclick();
     const input = todoPage.getTodoEditInput();
-    await input.fill('a'.repeat(105));
+    await input.pressSequentially('a'.repeat(105));
 
     await expect(input).toHaveValue('a'.repeat(100));
   });
