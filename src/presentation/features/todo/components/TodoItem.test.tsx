@@ -303,7 +303,7 @@ describe('TodoItem', () => {
       expect(screen.queryByTestId('todo-edit-input')).not.toBeInTheDocument();
     });
 
-    it('should show character counter while editing', () => {
+    it('should show character counter immediately on edit', () => {
       render(<TodoItem todo={todo} />);
 
       fireEvent.dblClick(screen.getByTestId('todo-text'));
@@ -311,6 +311,20 @@ describe('TodoItem', () => {
       const counter = screen.getByTestId('todo-edit-char-counter');
       expect(counter).toBeInTheDocument();
       expect(counter).toHaveTextContent('9 / 100');
+
+      const input = screen.getByTestId('todo-edit-input');
+      fireEvent.change(input, { target: { value: 'x'.repeat(90) } });
+      expect(counter).toHaveTextContent('90 / 100');
+    });
+
+    it('should show default color on character counter below limit', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.dblClick(screen.getByTestId('todo-text'));
+
+      expect(screen.getByTestId('todo-edit-char-counter')).toHaveClass(
+        'text-outline'
+      );
     });
 
     it('should show warning color on character counter near limit', () => {

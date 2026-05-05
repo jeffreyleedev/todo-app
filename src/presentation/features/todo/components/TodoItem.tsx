@@ -101,7 +101,7 @@ export function TodoItem({ todo }: TodoItemProps) {
       >
         <Icon name="drag_indicator" className="text-[20px]" />
       </div>
-      <div className="flex items-center gap-sm w-full ml-sm">
+      <div className="flex items-center gap-sm w-full ml-sm mr-sm relative">
         <label className="relative flex items-center justify-center w-[20px] h-[20px] shrink-0 cursor-pointer">
           <input
             type="checkbox"
@@ -117,7 +117,7 @@ export function TodoItem({ todo }: TodoItemProps) {
           />
         </label>
         {isEditing ? (
-          <div className="flex-1 flex flex-col gap-0.5">
+          <div className="flex-1 relative">
             <input
               ref={editInputRef}
               type="text"
@@ -127,17 +127,14 @@ export function TodoItem({ todo }: TodoItemProps) {
               onBlur={saveEdit}
               maxLength={TODO_MAX_LENGTH}
               data-testid="todo-edit-input"
-              className="w-full bg-surface-bright py-0.5 px-1 rounded border border-primary font-body-md text-on-surface outline-none"
+              className="w-full bg-surface-bright py-0.5 pl-1 pr-20 rounded border border-primary font-body-md text-on-surface outline-none"
             />
             <div
               data-testid="todo-edit-char-counter"
               className={cn(
-                'text-xs text-right shrink-0',
-                isAtLimit
-                  ? 'text-error'
-                  : isNearLimit
-                    ? 'text-warning'
-                    : 'text-outline'
+                'absolute right-1 top-1/2 -translate-y-1/2 text-xs pointer-events-none text-outline',
+                isNearLimit && 'text-warning',
+                isAtLimit && 'text-error'
               )}
             >
               {editText.length} / {TODO_MAX_LENGTH}
@@ -148,7 +145,7 @@ export function TodoItem({ todo }: TodoItemProps) {
             data-testid="todo-text"
             onDoubleClick={handleDoubleClick}
             className={cn(
-              'font-body-md text-on-surface flex-1 transition-colors duration-200 break-all',
+              'font-body-md text-on-surface flex-1 py-0.5 px-1 border border-transparent transition-colors duration-200 break-all',
               !todo.completed && 'cursor-text',
               todo.completed &&
                 'line-through text-on-surface-variant opacity-70'
