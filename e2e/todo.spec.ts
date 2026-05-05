@@ -509,7 +509,7 @@ test.describe('Todo App', () => {
 
       await todoPage.getTodoText('Short').dblclick();
       const input = todoPage.getTodoEditInput();
-      await input.fill('a'.repeat(105));
+      await input.pressSequentially('a'.repeat(105));
 
       await expect(input).toHaveValue('a'.repeat(100));
     });
@@ -569,7 +569,7 @@ test.describe('Todo App', () => {
 
       await todoPage.getTodoText('Short').dblclick();
       const input = todoPage.getTodoEditInput();
-      await input.fill('a'.repeat(100));
+      await input.pressSequentially('a'.repeat(100));
 
       await expect(todoPage.getTodoEditCharCounter()).toHaveClass(/text-error/);
     });
