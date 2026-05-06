@@ -28,15 +28,15 @@ export class TodoPage {
     this.getTodoItem(text).getByTestId('delete-todo');
 
   getFilterButton = (filter: 'all' | 'active' | 'completed'): Locator => {
-    const label = filter.charAt(0).toUpperCase() + filter.slice(1);
+    const label = filter.toUpperCase();
     return this.page.getByRole('button', { name: label, exact: true });
   };
 
   getClearCompletedButton = (): Locator =>
-    this.page.getByRole('button', { name: 'Clear completed' });
+    this.page.getByRole('button', { name: 'CLEAR COMPLETED' });
 
   getDeleteAllButton = (): Locator =>
-    this.page.getByRole('button', { name: 'Delete all' });
+    this.page.getByRole('button', { name: 'DELETE ALL' });
 
   getItemsLeft = (): Locator => this.page.getByTestId('items-left');
 
@@ -58,9 +58,6 @@ export class TodoPage {
       .filter({ hasText: text })
       .locator('[data-testid="todo-check-icon"]');
 
-  getThemeToggle = (): Locator =>
-    this.page.getByRole('button', { name: /^Switch to (dark|light) mode$/ });
-
   getDragHandle = (text: string): Locator =>
     this.getTodoItem(text).getByTestId('drag-handle');
 
@@ -78,6 +75,9 @@ export class TodoPage {
 
   getPriorityPillAdd = (todoText: string): Locator =>
     this.getTodoItem(todoText).getByTestId('priority-pill-add');
+
+  getPriorityPillAddMobile = (todoText: string): Locator =>
+    this.getTodoItem(todoText).getByTestId('priority-pill-add-mobile');
 
   /* Actions */
 
@@ -106,6 +106,9 @@ export class TodoPage {
     await item.hover();
     await this.getDeleteButton(text).click();
   };
+
+  getAllTodoTexts = async (): Promise<string[]> =>
+    this.page.getByTestId('todo-text').allTextContents();
 
   filterBy = async (filter: 'all' | 'active' | 'completed'): Promise<void> =>
     this.getFilterButton(filter).click();
@@ -146,6 +149,17 @@ export class TodoPage {
       { steps: 10 }
     );
     await this.page.mouse.up();
+  };
+
+  /* Priority Actions */
+
+  addPriorityToItem = async (todoText: string): Promise<void> => {
+    await this.getTodoItem(todoText).hover();
+    if (await this.getPriorityPillAdd(todoText).isVisible()) {
+      await this.getPriorityPillAdd(todoText).click();
+    } else {
+      await this.getPriorityPillAddMobile(todoText).click();
+    }
   };
 
   /* Edit Actions */
