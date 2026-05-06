@@ -53,13 +53,17 @@ describe('IconButton', () => {
   it('should pass fill prop to inner Icon', () => {
     render(<IconButton icon="check" fill />);
     const icon = screen.getByText('check');
-    expect(icon).toHaveStyle("fontVariationSettings: 'FILL' 1");
+    expect(icon).toHaveStyle(
+      "fontVariationSettings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24"
+    );
   });
 
   it('should pass fill=false to inner Icon by default', () => {
     render(<IconButton icon="check" />);
     const icon = screen.getByText('check');
-    expect(icon).toHaveStyle("fontVariationSettings: 'FILL' 0");
+    expect(icon).toHaveStyle(
+      "fontVariationSettings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24"
+    );
   });
 
   it('should not call onClick when disabled', () => {

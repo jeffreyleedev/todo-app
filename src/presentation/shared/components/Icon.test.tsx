@@ -11,13 +11,17 @@ describe('Icon', () => {
   it('should apply fill font variation when fill is true', () => {
     render(<Icon name="check" fill />);
     const icon = screen.getByText('check');
-    expect(icon).toHaveStyle("fontVariationSettings: 'FILL' 1");
+    expect(icon).toHaveStyle(
+      "fontVariationSettings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24"
+    );
   });
 
   it('should not apply fill font variation when fill is false', () => {
     render(<Icon name="check" />);
     const icon = screen.getByText('check');
-    expect(icon).toHaveStyle("fontVariationSettings: 'FILL' 0");
+    expect(icon).toHaveStyle(
+      "fontVariationSettings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24"
+    );
   });
 
   it('should apply custom className', () => {
