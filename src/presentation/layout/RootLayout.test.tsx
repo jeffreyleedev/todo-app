@@ -1,14 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { ThemeProvider } from '@/presentation/shared/context/ThemeContext';
 import { RootLayout } from './RootLayout';
-
-const renderWithTheme = (ui: React.ReactElement) =>
-  render(<ThemeProvider>{ui}</ThemeProvider>);
 
 describe('RootLayout', () => {
   it('should render children content', () => {
-    renderWithTheme(
+    render(
       <RootLayout>
         <div data-testid="child-content">Hello</div>
       </RootLayout>
@@ -17,16 +13,16 @@ describe('RootLayout', () => {
   });
 
   it('should render the Header', () => {
-    renderWithTheme(
+    render(
       <RootLayout>
         <div>Content</div>
       </RootLayout>
     );
-    expect(screen.getByText('FocusTask')).toBeInTheDocument();
+    expect(screen.getByText('TASKS')).toBeInTheDocument();
   });
 
   it('should render main element', () => {
-    renderWithTheme(
+    render(
       <RootLayout>
         <div>Content</div>
       </RootLayout>

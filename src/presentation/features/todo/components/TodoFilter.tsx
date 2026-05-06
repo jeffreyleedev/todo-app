@@ -7,22 +7,22 @@ export function TodoFilter() {
   const setFilter = useTodoStore((state) => state.setFilter);
 
   const filters: { label: string; value: Filter }[] = [
-    { label: 'All', value: 'all' },
-    { label: 'Active', value: 'active' },
-    { label: 'Completed', value: 'completed' },
+    { label: 'ALL', value: 'all' },
+    { label: 'ACTIVE', value: 'active' },
+    { label: 'COMPLETED', value: 'completed' },
   ];
 
   return (
-    <div className="flex gap-sm order-1 sm:order-2">
+    <div className="flex gap-8 order-1 sm:order-2">
       {filters.map((f) => (
         <button
           key={f.value}
           onClick={() => setFilter(f.value)}
           className={cn(
-            'font-label-md text-label-md transition-colors',
+            'font-kicker px-12 py-4 rounded-20 transition-colors duration-150',
             filter === f.value
-              ? 'text-primary'
-              : 'text-on-surface-variant hover:text-on-surface'
+              ? 'bg-mint text-black'
+              : 'bg-slate text-text-secondary hover:text-text-primary'
           )}
         >
           {f.label}

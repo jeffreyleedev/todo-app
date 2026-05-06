@@ -18,11 +18,12 @@ This React application follows Clean Architecture / Domain-Driven Design (DDD) p
 
 - Tailwind CSS is the primary styling solution.
 - For conditional or dynamic class names, use the `cn` utility (wrapper around clsx + tailwind-merge) located at `src/presentation/shared/utils/cn.ts`.
+- `DESIGN.md` defines the visual design system (colors, typography, spacing, border radii). Reference it before adding or modifying UI components.
 
 ## Development Workflow
 
 - **Lint:** `npm run lint` (ESLint)
-- **Format:** `npm run format` (Prettier)
+- **Format:** `npm run format` (Prettier). Always run after making code changes.
 - **Typecheck & Build:** `npm run build` (`tsc -b && vite build`)
 - **Dev Server:** `npm run dev`
 

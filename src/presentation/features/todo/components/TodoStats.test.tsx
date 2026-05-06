@@ -14,7 +14,7 @@ describe('TodoStats', () => {
     useTodoStore.setState({ todos });
 
     render(<TodoStats />);
-    expect(screen.getByTestId('items-left')).toHaveTextContent('2 items left');
+    expect(screen.getByTestId('items-left')).toHaveTextContent('2 ITEMS LEFT');
   });
 
   it('should use singular form for 1 item', () => {
@@ -22,14 +22,14 @@ describe('TodoStats', () => {
     useTodoStore.setState({ todos });
 
     render(<TodoStats />);
-    expect(screen.getByTestId('items-left')).toHaveTextContent('1 item left');
+    expect(screen.getByTestId('items-left')).toHaveTextContent('1 ITEM LEFT');
   });
 
   it('should use plural form for 0 items', () => {
     useTodoStore.setState({ todos: [] });
 
     render(<TodoStats />);
-    expect(screen.getByTestId('items-left')).toHaveTextContent('0 items left');
+    expect(screen.getByTestId('items-left')).toHaveTextContent('0 ITEMS LEFT');
   });
 
   it('should clear completed todos after confirmation', () => {
@@ -38,7 +38,7 @@ describe('TodoStats', () => {
     useTodoStore.setState({ todos: [active, completed] });
 
     render(<TodoStats />);
-    fireEvent.click(screen.getByRole('button', { name: /Clear completed/i }));
+    fireEvent.click(screen.getByRole('button', { name: /CLEAR COMPLETED/i }));
 
     const confirmButton = screen.getByTestId('confirm-dialog-confirm');
     fireEvent.click(confirmButton);
@@ -53,7 +53,7 @@ describe('TodoStats', () => {
     useTodoStore.setState({ todos: [active, completed], filter: 'all' });
 
     render(<TodoStats />);
-    fireEvent.click(screen.getByRole('button', { name: /Clear completed/i }));
+    fireEvent.click(screen.getByRole('button', { name: /CLEAR COMPLETED/i }));
 
     const cancelButton = screen.getByTestId('confirm-dialog-cancel');
     fireEvent.click(cancelButton);
@@ -67,7 +67,7 @@ describe('TodoStats', () => {
 
     render(<TodoStats />);
     expect(
-      screen.queryByRole('button', { name: /Clear completed/i })
+      screen.queryByRole('button', { name: /CLEAR COMPLETED/i })
     ).not.toBeInTheDocument();
   });
 
@@ -79,7 +79,7 @@ describe('TodoStats', () => {
 
     render(<TodoStats />);
     expect(
-      screen.queryByRole('button', { name: /Clear completed/i })
+      screen.queryByRole('button', { name: /CLEAR COMPLETED/i })
     ).not.toBeInTheDocument();
   });
 
@@ -88,14 +88,14 @@ describe('TodoStats', () => {
 
     render(<TodoStats />);
     expect(
-      screen.getByRole('button', { name: /Delete all/i })
+      screen.getByRole('button', { name: /DELETE ALL/i })
     ).toBeInTheDocument();
   });
 
   it('should not render Delete all when no todos exist', () => {
     render(<TodoStats />);
     expect(
-      screen.queryByRole('button', { name: /Delete all/i })
+      screen.queryByRole('button', { name: /DELETE ALL/i })
     ).not.toBeInTheDocument();
   });
 
@@ -107,7 +107,7 @@ describe('TodoStats', () => {
 
     render(<TodoStats />);
     expect(
-      screen.queryByRole('button', { name: /Delete all/i })
+      screen.queryByRole('button', { name: /DELETE ALL/i })
     ).not.toBeInTheDocument();
   });
 
@@ -117,7 +117,7 @@ describe('TodoStats', () => {
 
     render(<TodoStats />);
     expect(
-      screen.queryByRole('button', { name: /Delete all/i })
+      screen.queryByRole('button', { name: /DELETE ALL/i })
     ).not.toBeInTheDocument();
   });
 
@@ -127,7 +127,7 @@ describe('TodoStats', () => {
 
     render(<TodoStats />);
     expect(
-      screen.queryByRole('button', { name: /Delete all/i })
+      screen.queryByRole('button', { name: /DELETE ALL/i })
     ).not.toBeInTheDocument();
   });
 
@@ -137,7 +137,7 @@ describe('TodoStats', () => {
     });
 
     render(<TodoStats />);
-    fireEvent.click(screen.getByRole('button', { name: /Delete all/i }));
+    fireEvent.click(screen.getByRole('button', { name: /DELETE ALL/i }));
 
     const confirmButton = screen.getByTestId('confirm-dialog-confirm');
     fireEvent.click(confirmButton);
@@ -151,7 +151,7 @@ describe('TodoStats', () => {
     });
 
     render(<TodoStats />);
-    fireEvent.click(screen.getByRole('button', { name: /Delete all/i }));
+    fireEvent.click(screen.getByRole('button', { name: /DELETE ALL/i }));
 
     const cancelButton = screen.getByTestId('confirm-dialog-cancel');
     fireEvent.click(cancelButton);

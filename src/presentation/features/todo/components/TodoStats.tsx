@@ -31,31 +31,31 @@ export function TodoStats() {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-0 sm:justify-between pt-md border-t border-surface-variant/50 mt-sm w-full">
+    <div className="flex flex-col sm:flex-row items-center gap-12 sm:gap-0 sm:justify-between pt-20 border-t border-text-primary/20 mt-12 w-full pl-20">
       <span
         data-testid="items-left"
-        className="font-label-md text-label-md text-on-surface-variant order-2 sm:order-1"
+        className="font-caption text-text-secondary order-2 sm:order-1"
       >
-        {activeCount} {activeCount === 1 ? 'item' : 'items'} left
+        {activeCount} {activeCount === 1 ? 'ITEM' : 'ITEMS'} LEFT
       </span>
 
       <TodoFilter />
 
-      <div className="flex gap-md order-3">
+      <div className="flex gap-16 order-3">
         {showClearCompleted && (
           <button
             onClick={() => setConfirmAction('clear-completed')}
-            className="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors"
+            className="font-caption text-text-secondary hover:text-deep-link-blue transition-colors"
           >
-            Clear completed
+            CLEAR COMPLETED
           </button>
         )}
         {showDeleteAll && (
           <button
             onClick={() => setConfirmAction('delete-all')}
-            className="font-label-md text-label-md text-on-surface-variant hover:text-error transition-colors"
+            className="font-caption text-text-secondary hover:text-deep-link-blue transition-colors"
           >
-            Delete all
+            DELETE ALL
           </button>
         )}
       </div>

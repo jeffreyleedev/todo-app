@@ -1,9 +1,12 @@
 import { cn } from '@/presentation/shared/utils/cn';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'error';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'error' | 'tertiary';
   size?: 'sm' | 'md' | 'lg';
 }
+
+const FOCUS_STATES =
+  'focus-visible:bg-focus-cyan focus-visible:text-white focus-visible:border focus-visible:border-[#0500ff] focus-visible:ring-1 focus-visible:ring-white/50';
 
 export function Button({
   variant = 'primary',
@@ -13,27 +16,26 @@ export function Button({
   ...props
 }: ButtonProps) {
   const variants = {
-    primary:
-      'bg-primary text-on-primary hover:bg-primary-container hover:shadow-md active:scale-95',
-    secondary: 'bg-primary/10 text-primary hover:bg-primary/20 active:scale-95',
-    ghost:
-      'text-on-surface-variant hover:bg-surface-variant/50 active:scale-95',
-    error:
-      'text-on-surface-variant hover:text-error hover:bg-error-container/10 active:scale-95',
+    primary: `bg-mint text-black font-mono-btn hover:bg-white/20 hover:ring-1 hover:ring-[#c2c2c2] active:bg-dim-gray active:opacity-50 active:ring-dim-gray ${FOCUS_STATES}`,
+    secondary: `bg-slate text-text-muted font-mono-btn hover:bg-white/20 hover:text-black hover:ring-1 hover:ring-[#c2c2c2] ${FOCUS_STATES}`,
+    ghost: `text-text-primary hover:text-deep-link-blue ${FOCUS_STATES}`,
+    error: `bg-ultraviolet text-white font-mono-btn hover:bg-white/20 hover:text-black hover:ring-1 hover:ring-[#c2c2c2] active:bg-dim-gray active:opacity-50 active:ring-dim-gray ${FOCUS_STATES}`,
+    tertiary:
+      'bg-transparent text-mint border border-mint font-mono-btn hover:bg-mint hover:text-black rounded-40 px-20 py-10 transition-colors duration-150',
   };
 
   const sizes = {
-    sm: 'px-md py-xs text-label-md rounded-full',
-    md: 'px-md py-sm rounded-lg',
-    lg: 'px-lg py-md rounded-xl',
+    sm: 'px-12 py-5 text-[11px] rounded-20',
+    md: 'px-24 py-10 rounded-24',
+    lg: 'px-32 py-14 rounded-30',
   };
 
   return (
     <button
       className={cn(
-        'transition-all duration-200 flex items-center justify-center font-medium',
+        'transition-all duration-180 flex items-center justify-center',
         variants[variant],
-        sizes[size],
+        variant !== 'tertiary' && sizes[size],
         className
       )}
       {...props}

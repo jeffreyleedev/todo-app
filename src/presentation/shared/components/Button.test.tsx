@@ -20,48 +20,61 @@ describe('Button', () => {
   it('should apply primary variant classes by default', () => {
     render(<Button>Click me</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-primary', 'text-on-primary');
+    expect(button).toHaveClass('bg-mint', 'text-black');
   });
 
   it('should apply secondary variant classes', () => {
     render(<Button variant="secondary">Click me</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-primary/10', 'text-primary');
+    expect(button).toHaveClass('bg-slate', 'text-text-muted');
   });
 
   it('should apply ghost variant classes', () => {
     render(<Button variant="ghost">Click me</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('text-on-surface-variant');
+    expect(button).toHaveClass('text-text-primary');
   });
 
   it('should apply error variant classes', () => {
     render(<Button variant="error">Click me</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('text-on-surface-variant');
+    expect(button).toHaveClass('bg-ultraviolet', 'text-white');
+  });
+
+  it('should apply tertiary variant classes', () => {
+    render(<Button variant="tertiary">Outlined</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass(
+      'bg-transparent',
+      'text-mint',
+      'border',
+      'border-mint',
+      'rounded-40'
+    );
+  });
+
+  it('should apply focus-visible classes on primary variant', () => {
+    render(<Button>Click me</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('focus-visible:bg-focus-cyan');
   });
 
   it('should apply sm size classes', () => {
     render(<Button size="sm">Click me</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass(
-      'px-md',
-      'py-xs',
-      'text-label-md',
-      'rounded-full'
-    );
+    expect(button).toHaveClass('px-12', 'py-5', 'rounded-20');
   });
 
   it('should apply md size classes by default', () => {
     render(<Button>Click me</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('px-md', 'py-sm', 'rounded-lg');
+    expect(button).toHaveClass('px-24', 'py-10', 'rounded-24');
   });
 
   it('should apply lg size classes', () => {
     render(<Button size="lg">Click me</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('px-lg', 'py-md', 'rounded-xl');
+    expect(button).toHaveClass('px-32', 'py-14', 'rounded-30');
   });
 
   it('should not call onClick when disabled', () => {
@@ -97,6 +110,6 @@ describe('Button', () => {
     render(<Button className="custom-class">Click me</Button>);
     const button = screen.getByRole('button');
     expect(button).toHaveClass('custom-class');
-    expect(button).toHaveClass('bg-primary');
+    expect(button).toHaveClass('bg-mint');
   });
 });

@@ -65,17 +65,17 @@ test.describe('Todo App', () => {
     todoPage,
   }) => {
     const itemsLeft = todoPage.getItemsLeft();
-    await expect(itemsLeft).toHaveText('0 items left');
+    await expect(itemsLeft).toHaveText('0 ITEMS LEFT');
 
     await todoPage.addTodo('Task A');
     await todoPage.addTodo('Task B');
-    await expect(itemsLeft).toHaveText('2 items left');
+    await expect(itemsLeft).toHaveText('2 ITEMS LEFT');
 
     await todoPage.toggleTodo('Task A');
-    await expect(itemsLeft).toHaveText('1 item left');
+    await expect(itemsLeft).toHaveText('1 ITEM LEFT');
 
     await todoPage.deleteTodo('Task B');
-    await expect(itemsLeft).toHaveText('0 items left');
+    await expect(itemsLeft).toHaveText('0 ITEMS LEFT');
   });
 
   test('should display "No tasks yet. Add one above!" when the list is empty by default', async ({
@@ -169,7 +169,7 @@ test.describe('Todo App', () => {
 
     await input.fill('a'.repeat(90));
 
-    await expect(charCounter).toHaveClass(/text-warning/);
+    await expect(charCounter).toHaveClass(/text-accent-yellow/);
   });
 
   test('should show error color when at character limit', async ({
@@ -180,7 +180,7 @@ test.describe('Todo App', () => {
 
     await input.fill('a'.repeat(100));
 
-    await expect(charCounter).toHaveClass(/text-error/);
+    await expect(charCounter).toHaveClass(/text-ultraviolet/);
   });
 
   test('should show separator between active and completed todos', async ({
@@ -222,7 +222,7 @@ test.describe('Todo App', () => {
     const itemsLeft = todoPage.getItemsLeft();
     await todoPage.addTodo('Single task');
 
-    await expect(itemsLeft).toHaveText('1 item left');
+    await expect(itemsLeft).toHaveText('1 ITEM LEFT');
   });
 
   test('should display page title and subtitle', async ({ todoPage }) => {
@@ -245,17 +245,11 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Task');
 
     await todoPage.filterBy('active');
-    await expect(todoPage.getFilterButton('active')).toHaveClass(
-      /text-primary/
-    );
-    await expect(todoPage.getFilterButton('all')).not.toHaveClass(
-      /text-primary/
-    );
+    await expect(todoPage.getFilterButton('active')).toHaveClass(/bg-mint/);
+    await expect(todoPage.getFilterButton('all')).not.toHaveClass(/bg-mint/);
 
     await todoPage.filterBy('completed');
-    await expect(todoPage.getFilterButton('completed')).toHaveClass(
-      /text-primary/
-    );
+    await expect(todoPage.getFilterButton('completed')).toHaveClass(/bg-mint/);
   });
 
   test('should not add a duplicate active todo', async ({ todoPage }) => {
@@ -368,9 +362,7 @@ test.describe('Todo App', () => {
     // Drag Task C above Task A
     await todoPage.dragTodoAbove('Task C', 'Task A');
 
-    const todoTexts = await todoPage.page
-      .getByTestId('todo-text')
-      .allTextContents();
+    const todoTexts = await todoPage.getAllTodoTexts();
     expect(todoTexts).toEqual(['Task C', 'Task A', 'Task B']);
   });
 
@@ -383,14 +375,12 @@ test.describe('Todo App', () => {
 
     await todoPage.dragTodoAbove('Task B', 'Task A');
 
-    let todoTexts = await todoPage.page
-      .getByTestId('todo-text')
-      .allTextContents();
+    let todoTexts = await todoPage.getAllTodoTexts();
     expect(todoTexts).toEqual(['Task B', 'Task A']);
 
     await page.reload();
 
-    todoTexts = await todoPage.page.getByTestId('todo-text').allTextContents();
+    todoTexts = await todoPage.getAllTodoTexts();
     expect(todoTexts).toEqual(['Task B', 'Task A']);
   });
 
@@ -446,9 +436,7 @@ test.describe('Todo App', () => {
     // Drag Active B above Active A — completed items should stay in their section
     await todoPage.dragTodoAbove('Active B', 'Active A');
 
-    const texts = await todoPage.page
-      .getByTestId('todo-text')
-      .allTextContents();
+    const texts = await todoPage.getAllTodoTexts();
     expect(texts.slice(0, 2)).toEqual(['Active B', 'Active A']);
     expect(texts[2]).toBe('Done C');
   });
@@ -558,7 +546,7 @@ test.describe('Todo App', () => {
       await input.fill('a'.repeat(90));
 
       await expect(todoPage.getTodoEditCharCounter()).toHaveClass(
-        /text-warning/
+        /text-accent-yellow/
       );
     });
 
@@ -571,7 +559,9 @@ test.describe('Todo App', () => {
       const input = todoPage.getTodoEditInput();
       await input.pressSequentially('a'.repeat(100));
 
-      await expect(todoPage.getTodoEditCharCounter()).toHaveClass(/text-error/);
+      await expect(todoPage.getTodoEditCharCounter()).toHaveClass(
+        /text-ultraviolet/
+      );
     });
   });
 
@@ -589,9 +579,7 @@ test.describe('Todo App', () => {
     }) => {
       await todoPage.addTodo('Set priority');
 
-      const item = todoPage.getTodoItem('Set priority');
-      await item.hover();
-      await todoPage.getPriorityPillAdd('Set priority').click();
+      await todoPage.addPriorityToItem('Set priority');
 
       await expect(todoPage.getPriorityPill('Set priority')).toBeVisible();
       await expect(todoPage.getPriorityPill('Set priority')).toHaveText('high');
@@ -599,8 +587,7 @@ test.describe('Todo App', () => {
 
     test('should cycle priority on an existing item', async ({ todoPage }) => {
       await todoPage.addTodo('Cycle me');
-      await todoPage.getTodoItem('Cycle me').hover();
-      await todoPage.getPriorityPillAdd('Cycle me').click();
+      await todoPage.addPriorityToItem('Cycle me');
 
       const pill = todoPage.getPriorityPill('Cycle me');
       await expect(pill).toHaveText('high');
@@ -620,8 +607,7 @@ test.describe('Todo App', () => {
       todoPage,
     }) => {
       await todoPage.addTodo('Persist priority');
-      await todoPage.getTodoItem('Persist priority').hover();
-      await todoPage.getPriorityPillAdd('Persist priority').click();
+      await todoPage.addPriorityToItem('Persist priority');
 
       await page.reload();
 
@@ -635,8 +621,7 @@ test.describe('Todo App', () => {
       todoPage,
     }) => {
       await todoPage.addTodo('Complete me');
-      await todoPage.getTodoItem('Complete me').hover();
-      await todoPage.getPriorityPillAdd('Complete me').click();
+      await todoPage.addPriorityToItem('Complete me');
 
       await todoPage.toggleTodo('Complete me');
 
@@ -650,28 +635,25 @@ test.describe('Todo App', () => {
       todoPage,
     }) => {
       await todoPage.addTodo('Color high');
-      await todoPage.getTodoItem('Color high').hover();
-      await todoPage.getPriorityPillAdd('Color high').click();
+      await todoPage.addPriorityToItem('Color high');
 
       await todoPage.addTodo('Color medium');
-      await todoPage.getTodoItem('Color medium').hover();
-      await todoPage.getPriorityPillAdd('Color medium').click();
+      await todoPage.addPriorityToItem('Color medium');
       await todoPage.getPriorityPill('Color medium').click();
 
       await todoPage.addTodo('Color low');
-      await todoPage.getTodoItem('Color low').hover();
-      await todoPage.getPriorityPillAdd('Color low').click();
+      await todoPage.addPriorityToItem('Color low');
       await todoPage.getPriorityPill('Color low').click();
       await todoPage.getPriorityPill('Color low').click();
 
       await expect(todoPage.getPriorityPill('Color high')).toHaveClass(
-        /bg-error-container/
+        /bg-ultraviolet/
       );
       await expect(todoPage.getPriorityPill('Color medium')).toHaveClass(
-        /bg-tertiary-container/
+        /bg-accent-yellow/
       );
       await expect(todoPage.getPriorityPill('Color low')).toHaveClass(
-        /bg-secondary-container/
+        /bg-mint/
       );
     });
   });

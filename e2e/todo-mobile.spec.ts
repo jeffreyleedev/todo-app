@@ -58,7 +58,7 @@ test.describe('Todo App - Mobile Viewport', () => {
 
     await input.fill('a'.repeat(90));
 
-    await expect(charCounter).toHaveClass(/text-warning/);
+    await expect(charCounter).toHaveClass(/text-accent-yellow/);
   });
 
   test('should show character counter error at limit on mobile', async ({
@@ -69,7 +69,7 @@ test.describe('Todo App - Mobile Viewport', () => {
 
     await input.fill('a'.repeat(100));
 
-    await expect(charCounter).toHaveClass(/text-error/);
+    await expect(charCounter).toHaveClass(/text-ultraviolet/);
   });
 
   test('should persist todos on reload on mobile', async ({
@@ -87,7 +87,7 @@ test.describe('Todo App - Mobile Viewport', () => {
     todoPage,
   }) => {
     await todoPage.addTodo('Mobile cycle');
-    await todoPage.getPriorityPillAdd('Mobile cycle').click();
+    await todoPage.getPriorityPillAddMobile('Mobile cycle').click();
 
     await expect(todoPage.getPriorityPill('Mobile cycle')).toBeVisible();
     await expect(todoPage.getPriorityPill('Mobile cycle')).toHaveText('high');
@@ -96,12 +96,14 @@ test.describe('Todo App - Mobile Viewport', () => {
     await expect(todoPage.getPriorityPill('Mobile cycle')).toHaveText('medium');
   });
 
-  test('should show ghost priority pill on mobile without hover', async ({
+  test('should show mobile add-priority button when no priority is set', async ({
     todoPage,
   }) => {
     await todoPage.addTodo('Mobile ghost');
 
-    await expect(todoPage.getPriorityPillAdd('Mobile ghost')).toBeVisible();
+    await expect(
+      todoPage.getPriorityPillAddMobile('Mobile ghost')
+    ).toBeVisible();
   });
 
   test('should clear completed todos on mobile', async ({ todoPage }) => {
@@ -150,7 +152,7 @@ test.describe('Todo App - Mobile Viewport', () => {
     const itemsLeft = todoPage.getItemsLeft();
     await todoPage.addTodo('Only one');
 
-    await expect(itemsLeft).toHaveText('1 item left');
+    await expect(itemsLeft).toHaveText('1 ITEM LEFT');
   });
 
   test('should edit an active todo on mobile', async ({ todoPage }) => {
@@ -179,9 +181,7 @@ test.describe('Todo App - Mobile Viewport', () => {
 
     await todoPage.dragTodoAbove('Mobile C', 'Mobile A');
 
-    const texts = await todoPage.page
-      .getByTestId('todo-text')
-      .allTextContents();
+    const texts = await todoPage.getAllTodoTexts();
     expect(texts).toEqual(['Mobile C', 'Mobile A', 'Mobile B']);
   });
 });

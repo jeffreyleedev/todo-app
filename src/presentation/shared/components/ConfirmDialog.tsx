@@ -19,19 +19,17 @@ export function ConfirmDialog({
   return (
     <div
       data-testid="confirm-dialog-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/[0.33] px-12"
     >
       <div
         data-testid="confirm-dialog"
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="bg-surface rounded-xl shadow-[var(--shadow-overlay)] border border-surface-variant/50 p-md w-full max-w-[24rem]"
+        className="bg-canvas rounded-20 border border-text-primary p-24 w-full max-w-[24rem]"
       >
-        <div className="flex items-start justify-between mb-sm">
-          <h2 className="font-headline-sm text-headline-sm text-on-surface pr-md">
-            {title}
-          </h2>
+        <div className="flex items-start justify-between mb-12">
+          <h2 className="font-headline-sm text-text-primary pr-24">{title}</h2>
           <IconButton
             icon="close"
             variant="ghost"
@@ -39,13 +37,11 @@ export function ConfirmDialog({
             onClick={onCancel}
             aria-label="Close dialog"
             data-testid="confirm-dialog-close"
-            className="-mt-xs -mr-xs"
+            className="-mt-4 -mr-4"
           />
         </div>
-        <p className="font-body-md text-body-md text-on-surface-variant mb-md">
-          {message}
-        </p>
-        <div className="flex justify-end gap-sm">
+        <p className="font-body text-text-secondary mb-24">{message}</p>
+        <div className="flex justify-end gap-12">
           <Button
             variant="ghost"
             onClick={onCancel}
@@ -54,8 +50,7 @@ export function ConfirmDialog({
             Cancel
           </Button>
           <Button
-            variant="primary"
-            className="bg-error text-on-error hover:bg-error-container"
+            variant="error"
             onClick={onConfirm}
             data-testid="confirm-dialog-confirm"
           >

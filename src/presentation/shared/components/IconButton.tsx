@@ -17,23 +17,21 @@ export function IconButton({
   ...props
 }: IconButtonProps) {
   const variants = {
-    primary:
-      'bg-primary text-on-primary hover:bg-primary-container active:scale-90 shadow-sm',
+    primary: 'bg-mint text-black hover:opacity-80 active:opacity-60',
     ghost:
-      'text-on-surface-variant hover:bg-surface-variant/50 active:scale-95',
-    error:
-      'text-outline-variant hover:text-error hover:bg-error-container active:scale-95',
+      'text-text-secondary hover:text-text-primary active:text-text-primary',
+    error: 'text-text-secondary hover:text-ultraviolet active:text-ultraviolet',
   };
 
   const shapes = {
-    circle: 'rounded-full',
-    square: 'rounded',
+    circle: 'rounded-half',
+    square: 'rounded-4',
   };
 
   return (
     <button
       className={cn(
-        'w-[32px] h-[32px] flex items-center justify-center transition-all duration-200',
+        'w-[32px] h-[32px] flex items-center justify-center transition-all duration-180',
         variants[variant],
         shapes[shape],
         className

@@ -148,37 +148,31 @@ describe('TodoItem', () => {
     expect(setPrioritySpy).toHaveBeenCalledWith(prioTodo.id, undefined);
   });
 
-  it('should apply bg-error-container class for high priority', () => {
+  it('should apply bg-ultraviolet class for high priority', () => {
     const prioTodo = createTodo('Priority');
     useTodoStore.setState({ todos: [prioTodo] });
     useTodoStore.getState().setPriority(prioTodo.id, 'high');
 
     render(<TodoItem todo={useTodoStore.getState().todos[0]} />);
-    expect(screen.getByTestId('priority-pill')).toHaveClass(
-      'bg-error-container'
-    );
+    expect(screen.getByTestId('priority-pill')).toHaveClass('bg-ultraviolet');
   });
 
-  it('should apply bg-tertiary-container class for medium priority', () => {
+  it('should apply bg-accent-yellow class for medium priority', () => {
     const prioTodo = createTodo('Priority');
     useTodoStore.setState({ todos: [prioTodo] });
     useTodoStore.getState().setPriority(prioTodo.id, 'medium');
 
     render(<TodoItem todo={useTodoStore.getState().todos[0]} />);
-    expect(screen.getByTestId('priority-pill')).toHaveClass(
-      'bg-tertiary-container'
-    );
+    expect(screen.getByTestId('priority-pill')).toHaveClass('bg-accent-yellow');
   });
 
-  it('should apply bg-secondary-container class for low priority', () => {
+  it('should apply bg-mint class for low priority', () => {
     const prioTodo = createTodo('Priority');
     useTodoStore.setState({ todos: [prioTodo] });
     useTodoStore.getState().setPriority(prioTodo.id, 'low');
 
     render(<TodoItem todo={useTodoStore.getState().todos[0]} />);
-    expect(screen.getByTestId('priority-pill')).toHaveClass(
-      'bg-secondary-container'
-    );
+    expect(screen.getByTestId('priority-pill')).toHaveClass('bg-mint');
   });
 
   it('should show add priority button when todo has no priority and is not completed', () => {
@@ -203,6 +197,38 @@ describe('TodoItem', () => {
     render(<TodoItem todo={useTodoStore.getState().todos[0]} />);
     expect(screen.queryByTestId('priority-pill')).not.toBeInTheDocument();
     expect(screen.queryByTestId('priority-pill-add')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('priority-pill-add-mobile')
+    ).not.toBeInTheDocument();
+  });
+
+  it('should show mobile add-priority button when todo has no priority and is not completed', () => {
+    render(<TodoItem todo={todo} />);
+    expect(screen.getByTestId('priority-pill-add-mobile')).toBeInTheDocument();
+  });
+
+  it('should hide priority pill during edit mode', () => {
+    const prioTodo = createTodo('Priority');
+    useTodoStore.setState({ todos: [prioTodo] });
+    useTodoStore.getState().setPriority(prioTodo.id, 'high');
+
+    render(<TodoItem todo={useTodoStore.getState().todos[0]} />);
+
+    fireEvent.dblClick(screen.getByTestId('todo-text'));
+
+    expect(screen.queryByTestId('priority-pill')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('priority-pill-add')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('priority-pill-add-mobile')
+    ).not.toBeInTheDocument();
+  });
+
+  it('should hide delete button during edit mode', () => {
+    render(<TodoItem todo={todo} />);
+
+    fireEvent.dblClick(screen.getByTestId('todo-text'));
+
+    expect(screen.queryByTestId('delete-todo')).not.toBeInTheDocument();
   });
 
   it('should delete todo when delete button is clicked', () => {
@@ -323,7 +349,7 @@ describe('TodoItem', () => {
       fireEvent.dblClick(screen.getByTestId('todo-text'));
 
       expect(screen.getByTestId('todo-edit-char-counter')).toHaveClass(
-        'text-outline'
+        'text-text-secondary'
       );
     });
 
@@ -335,7 +361,7 @@ describe('TodoItem', () => {
       fireEvent.change(input, { target: { value: 'a'.repeat(90) } });
 
       expect(screen.getByTestId('todo-edit-char-counter')).toHaveClass(
-        'text-warning'
+        'text-accent-yellow'
       );
     });
 
@@ -347,7 +373,7 @@ describe('TodoItem', () => {
       fireEvent.change(input, { target: { value: 'a'.repeat(100) } });
 
       expect(screen.getByTestId('todo-edit-char-counter')).toHaveClass(
-        'text-error'
+        'text-ultraviolet'
       );
     });
   });
@@ -372,8 +398,6 @@ describe('TodoItem', () => {
 
     render(<TodoItem todo={todo} />);
     const item = screen.getByTestId('todo-item');
-    // CSS.Transform.toString is mocked to return '', but the non-null transform
-    // causes the style computation to run — verify the item still renders
     expect(item).toBeInTheDocument();
   });
 });
