@@ -93,7 +93,7 @@ export function TodoItem({ todo }: TodoItemProps) {
         isDragging && 'opacity-50 z-50'
       )}
     >
-      <div className="absolute left-[8px] top-[30px] w-[4px] h-[4px] rounded-half bg-mint -translate-x-1/2" />
+      <div className="absolute left-[8px] top-1/2 w-[4px] h-[4px] rounded-half bg-mint -translate-x-1/2 -translate-y-1/2" />
 
       <div
         className={cn(
@@ -105,7 +105,7 @@ export function TodoItem({ todo }: TodoItemProps) {
       >
         <div className="flex items-center gap-12 w-full mr-12 relative">
           <div
-            className="shrink-0 cursor-grab active:cursor-grabbing"
+            className="shrink-0 cursor-grab active:cursor-grabbing flex items-center"
             {...attributes}
             {...listeners}
             data-testid="drag-handle"
