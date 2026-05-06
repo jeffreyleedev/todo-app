@@ -22,6 +22,8 @@ export default {
         'accent-yellow': '#ffe600',
         'accent-pink': '#ff6eb4',
         'accent-orange': '#ff6b35',
+        'button-hover-overlay': 'rgba(255, 255, 255, 0.2)',
+        'ring-hover': '#c2c2c2',
       },
       borderRadius: {
         2: '2px',
