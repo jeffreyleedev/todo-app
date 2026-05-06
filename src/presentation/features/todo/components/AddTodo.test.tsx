@@ -110,7 +110,7 @@ describe('AddTodo', () => {
     const counter = screen.getByTestId('char-counter');
 
     fireEvent.change(input, { target: { value: 'a'.repeat(50) } });
-    expect(counter).toHaveClass('text-outline');
+    expect(counter).toHaveClass('text-text-secondary');
   });
 
   it('should show normal color at exactly 89 characters', () => {
@@ -121,7 +121,7 @@ describe('AddTodo', () => {
     const counter = screen.getByTestId('char-counter');
 
     fireEvent.change(input, { target: { value: 'a'.repeat(89) } });
-    expect(counter).toHaveClass('text-outline');
+    expect(counter).toHaveClass('text-text-secondary');
   });
 
   it('should show warning color when at or above 90% of limit', () => {
@@ -132,7 +132,7 @@ describe('AddTodo', () => {
     const counter = screen.getByTestId('char-counter');
 
     fireEvent.change(input, { target: { value: 'a'.repeat(90) } });
-    expect(counter).toHaveClass('text-warning');
+    expect(counter).toHaveClass('text-accent-yellow');
   });
 
   it('should show warning color at exactly 99 characters', () => {
@@ -143,7 +143,7 @@ describe('AddTodo', () => {
     const counter = screen.getByTestId('char-counter');
 
     fireEvent.change(input, { target: { value: 'a'.repeat(99) } });
-    expect(counter).toHaveClass('text-warning');
+    expect(counter).toHaveClass('text-accent-yellow');
   });
 
   it('should show error color when at 100% of limit', () => {
@@ -154,7 +154,7 @@ describe('AddTodo', () => {
     const counter = screen.getByTestId('char-counter');
 
     fireEvent.change(input, { target: { value: 'a'.repeat(100) } });
-    expect(counter).toHaveClass('text-error');
+    expect(counter).toHaveClass('text-ultraviolet');
   });
 
   it('should allow adding a todo with exactly max length characters', () => {

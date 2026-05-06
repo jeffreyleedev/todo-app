@@ -4,12 +4,10 @@ import { TodoStats } from '../features/todo/components/TodoStats';
 
 export function HomePage() {
   return (
-    <div className="w-full bg-surface-container-lowest rounded-xl shadow-card p-5 sm:p-6 md:p-lg flex flex-col gap-5 sm:gap-6 md:gap-lg border border-surface-variant/30">
-      <div className="flex flex-col gap-base text-center">
-        <h1 className="text-2xl sm:text-[28px] md:font-headline-lg leading-tight font-semibold tracking-tight text-on-surface">
-          My Tasks
-        </h1>
-        <p className="font-body-md text-on-surface-variant">
+    <div className="w-full bg-canvas rounded-24 border border-text-primary p-20 sm:p-24 md:p-32 flex flex-col gap-20 sm:gap-24">
+      <div className="flex flex-col gap-8 text-center">
+        <h1 className="font-headline-lg text-text-primary">My Tasks</h1>
+        <p className="font-body text-text-secondary">
           Stay focused and organized.
         </p>
       </div>

@@ -18,31 +18,31 @@ describe('IconButton', () => {
   it('should apply primary variant classes', () => {
     render(<IconButton icon="check" variant="primary" />);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-primary', 'text-on-primary');
+    expect(button).toHaveClass('bg-mint', 'text-black');
   });
 
   it('should apply ghost variant classes by default', () => {
     render(<IconButton icon="check" />);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('text-on-surface-variant');
+    expect(button).toHaveClass('text-text-secondary');
   });
 
   it('should apply error variant classes', () => {
     render(<IconButton icon="check" variant="error" />);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('text-outline-variant');
+    expect(button).toHaveClass('text-text-secondary');
   });
 
   it('should apply square shape classes', () => {
     render(<IconButton icon="check" shape="square" />);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('rounded');
+    expect(button).toHaveClass('rounded-4');
   });
 
   it('should apply circle shape classes by default', () => {
     render(<IconButton icon="check" />);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('rounded-full');
+    expect(button).toHaveClass('rounded-half');
   });
 
   it('should forward data-testid and other props', () => {
@@ -83,6 +83,6 @@ describe('IconButton', () => {
     render(<IconButton icon="check" className="custom-class" />);
     const button = screen.getByRole('button');
     expect(button).toHaveClass('custom-class');
-    expect(button).toHaveClass('rounded-full');
+    expect(button).toHaveClass('rounded-half');
   });
 });

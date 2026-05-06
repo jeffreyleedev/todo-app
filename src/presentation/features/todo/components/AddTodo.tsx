@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTodoStore } from '@/application';
 import { TODO_MAX_LENGTH, isDuplicateTodo } from '@/domain';
-import { IconButton } from '@/presentation/shared/components/IconButton';
+import { Button } from '@/presentation/shared/components/Button';
 import { cn } from '@/presentation/shared/utils/cn';
 
 export function AddTodo() {
@@ -24,39 +24,36 @@ export function AddTodo() {
   const isAtLimit = text.length >= TODO_MAX_LENGTH;
 
   return (
-    <div className="flex flex-col gap-sm w-full">
-      <form
-        onSubmit={handleSubmit}
-        className="relative flex items-center w-full group"
-      >
+    <div className="flex flex-col gap-12 w-full pl-20">
+      <form onSubmit={handleSubmit} className="flex items-center gap-12 w-full">
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Add a new task..."
           maxLength={TODO_MAX_LENGTH}
-          className="w-full bg-surface py-sm pl-md pr-[60px] rounded-lg border border-transparent focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim/50 font-body-md text-on-surface placeholder:text-outline transition-all duration-200 outline-none"
+          className="flex-1 bg-canvas py-10 px-12 rounded-2 border border-text-secondary focus:border-mint focus-visible:ring-1 focus-visible:ring-ultraviolet/50 font-body text-text-primary placeholder:text-text-secondary transition-colors duration-150 outline-none"
         />
-        <IconButton
+        <Button
           type="submit"
           data-testid="add-todo-button"
-          icon="add"
           variant="primary"
-          shape="square"
-          className="absolute right-sm top-1/2 -translate-y-1/2"
+          size="md"
           disabled={!trimmed || trimmed.length > TODO_MAX_LENGTH || isDuplicate}
-        />
+        >
+          Add
+        </Button>
       </form>
-      <div className="flex items-center justify-end gap-sm">
+      <div className="flex items-center justify-end">
         <div
           data-testid="char-counter"
           className={cn(
-            'text-xs text-right shrink-0',
+            'font-caption',
             isAtLimit
-              ? 'text-error'
+              ? 'text-ultraviolet'
               : isNearLimit
-                ? 'text-warning'
-                : 'text-outline'
+                ? 'text-accent-yellow'
+                : 'text-text-secondary'
           )}
         >
           {text.length} / {TODO_MAX_LENGTH}
