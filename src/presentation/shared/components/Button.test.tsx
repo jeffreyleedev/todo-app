@@ -112,4 +112,43 @@ describe('Button', () => {
     expect(button).toHaveClass('custom-class');
     expect(button).toHaveClass('bg-mint');
   });
+
+  it('should apply button-hover-overlay and ring-hover classes on primary variant', () => {
+    render(<Button>Click me</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass(
+      'hover:bg-button-hover-overlay',
+      'hover:ring-ring-hover'
+    );
+  });
+
+  it('should apply button-hover-overlay and ring-hover classes on secondary variant', () => {
+    render(<Button variant="secondary">Click me</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass(
+      'hover:bg-button-hover-overlay',
+      'hover:ring-ring-hover'
+    );
+  });
+
+  it('should apply button-hover-overlay and ring-hover classes on error variant', () => {
+    render(<Button variant="error">Click me</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass(
+      'hover:bg-button-hover-overlay',
+      'hover:ring-ring-hover'
+    );
+  });
+
+  it('should not apply button-hover-overlay classes on ghost and tertiary variants', () => {
+    const { rerender } = render(<Button variant="ghost">Ghost</Button>);
+    let button = screen.getByRole('button');
+    expect(button).not.toHaveClass('hover:bg-button-hover-overlay');
+    expect(button).not.toHaveClass('hover:ring-ring-hover');
+
+    rerender(<Button variant="tertiary">Tertiary</Button>);
+    button = screen.getByRole('button');
+    expect(button).not.toHaveClass('hover:bg-button-hover-overlay');
+    expect(button).not.toHaveClass('hover:ring-ring-hover');
+  });
 });
