@@ -657,4 +657,37 @@ test.describe('Todo App', () => {
       );
     });
   });
+
+  test('should reset filter to "all" after page reload', async ({
+    todoPage,
+    page,
+  }) => {
+    await todoPage.addTodo('Active task');
+    await todoPage.addTodo('Done task');
+    await todoPage.toggleTodo('Done task');
+
+    await todoPage.filterBy('completed');
+    await expect(todoPage.getTodoText('Active task')).not.toBeVisible();
+
+    await page.reload();
+
+    await expect(todoPage.getFilterButton('all')).toHaveClass(/bg-mint/);
+    await expect(todoPage.getTodoText('Active task')).toBeVisible();
+    await expect(todoPage.getTodoText('Done task')).toBeVisible();
+  });
+
+  test('should close confirm dialog without action on Escape', async ({
+    todoPage,
+    page,
+  }) => {
+    await todoPage.addTodo('Keep me');
+
+    await todoPage.getDeleteAllButton().click();
+    await expect(todoPage.confirmDialog.getDialog()).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expect(todoPage.confirmDialog.getDialog()).not.toBeVisible();
+
+    await expect(todoPage.getTodoText('Keep me')).toBeVisible();
+  });
 });
