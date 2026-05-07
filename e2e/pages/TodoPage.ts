@@ -10,74 +10,74 @@ export class TodoPage {
 
   /* Locators */
 
-  getNewTodoInput = (): Locator =>
+  newTodoInput = (): Locator =>
     this.page.getByPlaceholder('Add a new task...');
 
-  getAddButton = (): Locator => this.page.getByTestId('add-todo-button');
+  addButton = (): Locator => this.page.getByTestId('add-todo-button');
 
-  getTodoItem = (text: string): Locator =>
+  todoItem = (text: string): Locator =>
     this.page.getByTestId('todo-item').filter({ hasText: text });
 
-  getTodoCheckbox = (text: string): Locator =>
-    this.getTodoItem(text).getByTestId('todo-checkbox');
+  todoCheckbox = (text: string): Locator =>
+    this.todoItem(text).getByTestId('todo-checkbox');
 
-  getTodoText = (text: string): Locator =>
-    this.getTodoItem(text).getByTestId('todo-text');
+  todoText = (text: string): Locator =>
+    this.todoItem(text).getByTestId('todo-text');
 
-  getDeleteButton = (text: string): Locator =>
-    this.getTodoItem(text).getByTestId('delete-todo');
+  deleteButton = (text: string): Locator =>
+    this.todoItem(text).getByTestId('delete-todo');
 
-  getFilterButton = (filter: 'all' | 'active' | 'completed'): Locator => {
+  filterButton = (filter: 'all' | 'active' | 'completed'): Locator => {
     const label = filter.toUpperCase();
     return this.page.getByRole('button', { name: label, exact: true });
   };
 
-  getClearCompletedButton = (): Locator =>
+  clearCompletedButton = (): Locator =>
     this.page.getByRole('button', { name: 'CLEAR COMPLETED' });
 
-  getDeleteAllButton = (): Locator =>
+  deleteAllButton = (): Locator =>
     this.page.getByRole('button', { name: 'DELETE ALL' });
 
-  getItemsLeft = (): Locator => this.page.getByTestId('items-left');
+  itemsLeft = (): Locator => this.page.getByTestId('items-left');
 
-  getMessageByText = (text: string): Locator => this.page.getByText(text);
+  messageByText = (text: string): Locator => this.page.getByText(text);
 
-  getCharCounter = (): Locator => this.page.getByTestId('char-counter');
+  charCounter = (): Locator => this.page.getByTestId('char-counter');
 
-  getSeparator = (): Locator => this.page.getByTestId('todo-separator');
+  separator = (): Locator => this.page.getByTestId('todo-separator');
 
-  getHeading = (): Locator =>
+  heading = (): Locator =>
     this.page.getByRole('heading', { name: 'My Tasks' });
 
-  getSubtitle = (): Locator =>
+  subtitle = (): Locator =>
     this.page.getByText('Stay focused and organized.');
 
-  getCheckIconLocator = (text: string): Locator =>
+  checkIconLocator = (text: string): Locator =>
     this.page
       .locator('[data-testid="todo-item"]')
       .filter({ hasText: text })
       .locator('[data-testid="todo-check-icon"]');
 
-  getDragHandle = (text: string): Locator =>
-    this.getTodoItem(text).getByTestId('drag-handle');
+  dragHandle = (text: string): Locator =>
+    this.todoItem(text).getByTestId('drag-handle');
 
   /* Edit Locators */
 
-  getTodoEditInput = (): Locator => this.page.getByTestId('todo-edit-input');
+  todoEditInput = (): Locator => this.page.getByTestId('todo-edit-input');
 
-  getTodoEditCharCounter = (): Locator =>
+  todoEditCharCounter = (): Locator =>
     this.page.getByTestId('todo-edit-char-counter');
 
   /* Priority Locators */
 
-  getPriorityPill = (todoText: string): Locator =>
-    this.getTodoItem(todoText).getByTestId('priority-pill');
+  priorityPill = (todoText: string): Locator =>
+    this.todoItem(todoText).getByTestId('priority-pill');
 
-  getPriorityPillAdd = (todoText: string): Locator =>
-    this.getTodoItem(todoText).getByTestId('priority-pill-add');
+  priorityPillAdd = (todoText: string): Locator =>
+    this.todoItem(todoText).getByTestId('priority-pill-add');
 
-  getPriorityPillAddMobile = (todoText: string): Locator =>
-    this.getTodoItem(todoText).getByTestId('priority-pill-add-mobile');
+  priorityPillAddMobile = (todoText: string): Locator =>
+    this.todoItem(todoText).getByTestId('priority-pill-add-mobile');
 
   /* Actions */
 
@@ -89,9 +89,9 @@ export class TodoPage {
   };
 
   fillNewTodo = async (text: string): Promise<void> =>
-    this.getNewTodoInput().fill(text);
+    this.newTodoInput().fill(text);
 
-  pressEnter = async (): Promise<void> => this.getNewTodoInput().press('Enter');
+  pressEnter = async (): Promise<void> => this.newTodoInput().press('Enter');
 
   addTodo = async (text: string): Promise<void> => {
     await this.fillNewTodo(text);
@@ -99,36 +99,36 @@ export class TodoPage {
   };
 
   toggleTodo = async (text: string): Promise<void> =>
-    this.getTodoCheckbox(text).click();
+    this.todoCheckbox(text).click();
 
   deleteTodo = async (text: string): Promise<void> => {
-    const item = this.getTodoItem(text);
+    const item = this.todoItem(text);
     await item.hover();
-    await this.getDeleteButton(text).click();
+    await this.deleteButton(text).click();
   };
 
   getAllTodoTexts = async (): Promise<string[]> =>
     this.page.getByTestId('todo-text').allTextContents();
 
   filterBy = async (filter: 'all' | 'active' | 'completed'): Promise<void> =>
-    this.getFilterButton(filter).click();
+    this.filterButton(filter).click();
 
   clearCompleted = async (): Promise<void> => {
-    await this.getClearCompletedButton().click();
-    await this.confirmDialog.getConfirmButton().click();
+    await this.clearCompletedButton().click();
+    await this.confirmDialog.confirmButton().click();
   };
 
   deleteAll = async (): Promise<void> => {
-    await this.getDeleteAllButton().click();
-    await this.confirmDialog.getConfirmButton().click();
+    await this.deleteAllButton().click();
+    await this.confirmDialog.confirmButton().click();
   };
 
   dragTodoAbove = async (
     sourceText: string,
     targetText: string
   ): Promise<void> => {
-    const sourceHandle = this.getDragHandle(sourceText);
-    const targetItem = this.getTodoItem(targetText);
+    const sourceHandle = this.dragHandle(sourceText);
+    const targetItem = this.todoItem(targetText);
 
     const sourceBox = await sourceHandle.boundingBox();
     const targetBox = await targetItem.boundingBox();
@@ -154,25 +154,25 @@ export class TodoPage {
   /* Priority Actions */
 
   addPriorityToItem = async (todoText: string): Promise<void> => {
-    await this.getTodoItem(todoText).hover();
-    if (await this.getPriorityPillAdd(todoText).isVisible()) {
-      await this.getPriorityPillAdd(todoText).click();
+    await this.todoItem(todoText).hover();
+    if (await this.priorityPillAdd(todoText).isVisible()) {
+      await this.priorityPillAdd(todoText).click();
     } else {
-      await this.getPriorityPillAddMobile(todoText).click();
+      await this.priorityPillAddMobile(todoText).click();
     }
   };
 
   /* Edit Actions */
 
   editTodo = async (oldText: string, newText: string): Promise<void> => {
-    await this.getTodoText(oldText).dblclick();
-    await this.getTodoEditInput().fill(newText);
-    await this.getTodoEditInput().press('Enter');
+    await this.todoText(oldText).dblclick();
+    await this.todoEditInput().fill(newText);
+    await this.todoEditInput().press('Enter');
   };
 
   cancelEdit = async (todoText: string, newText: string): Promise<void> => {
-    await this.getTodoText(todoText).dblclick();
-    await this.getTodoEditInput().fill(newText);
-    await this.getTodoEditInput().press('Escape');
+    await this.todoText(todoText).dblclick();
+    await this.todoEditInput().fill(newText);
+    await this.todoEditInput().press('Escape');
   };
 }

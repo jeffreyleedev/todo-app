@@ -5,11 +5,11 @@ test.describe('Todo App - Mobile Viewport', () => {
 
   test('should add and delete a todo on mobile', async ({ todoPage }) => {
     await todoPage.addTodo('Mobile task');
-    await expect(todoPage.getTodoText('Mobile task')).toBeVisible();
+    await expect(todoPage.todoText('Mobile task')).toBeVisible();
 
     // On mobile, delete button is always visible (no hover needed)
-    await todoPage.getDeleteButton('Mobile task').click();
-    await expect(todoPage.getTodoText('Mobile task')).not.toBeVisible();
+    await todoPage.deleteButton('Mobile task').click();
+    await expect(todoPage.todoText('Mobile task')).not.toBeVisible();
   });
 
   test('should filter todos on mobile', async ({ todoPage }) => {
@@ -18,13 +18,13 @@ test.describe('Todo App - Mobile Viewport', () => {
     await todoPage.toggleTodo('Completed');
 
     await todoPage.filterBy('active');
-    await expect(todoPage.getTodoText('Active')).toBeVisible();
-    await expect(todoPage.getTodoText('Completed')).not.toBeVisible();
+    await expect(todoPage.todoText('Active')).toBeVisible();
+    await expect(todoPage.todoText('Completed')).not.toBeVisible();
   });
 
   test('should display correct empty state on mobile', async ({ todoPage }) => {
     await expect(
-      todoPage.getMessageByText('No tasks yet. Add one above!')
+      todoPage.messageByText('No tasks yet. Add one above!')
     ).toBeVisible();
   });
 
@@ -36,25 +36,25 @@ test.describe('Todo App - Mobile Viewport', () => {
     await todoPage.filterBy('active');
 
     await expect(
-      todoPage.getMessageByText('No tasks in this category.')
+      todoPage.messageByText('No tasks in this category.')
     ).toBeVisible();
   });
 
   test('should prevent duplicate todos on mobile', async ({ todoPage }) => {
     await todoPage.addTodo('Buy milk');
 
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('Buy milk');
 
-    const addButton = todoPage.getAddButton();
+    const addButton = todoPage.addButton();
     await expect(addButton).toBeDisabled();
   });
 
   test('should show character counter warning on mobile', async ({
     todoPage,
   }) => {
-    const input = todoPage.getNewTodoInput();
-    const charCounter = todoPage.getCharCounter();
+    const input = todoPage.newTodoInput();
+    const charCounter = todoPage.charCounter();
 
     await input.fill('a'.repeat(90));
 
@@ -64,8 +64,8 @@ test.describe('Todo App - Mobile Viewport', () => {
   test('should show character counter error at limit on mobile', async ({
     todoPage,
   }) => {
-    const input = todoPage.getNewTodoInput();
-    const charCounter = todoPage.getCharCounter();
+    const input = todoPage.newTodoInput();
+    const charCounter = todoPage.charCounter();
 
     await input.fill('a'.repeat(100));
 
@@ -80,20 +80,20 @@ test.describe('Todo App - Mobile Viewport', () => {
 
     await page.reload();
 
-    await expect(todoPage.getTodoText('Mobile persistent')).toBeVisible();
+    await expect(todoPage.todoText('Mobile persistent')).toBeVisible();
   });
 
   test('should update priority via click-to-cycle on mobile', async ({
     todoPage,
   }) => {
     await todoPage.addTodo('Mobile cycle');
-    await todoPage.getPriorityPillAddMobile('Mobile cycle').click();
+    await todoPage.priorityPillAddMobile('Mobile cycle').click();
 
-    await expect(todoPage.getPriorityPill('Mobile cycle')).toBeVisible();
-    await expect(todoPage.getPriorityPill('Mobile cycle')).toHaveText('high');
+    await expect(todoPage.priorityPill('Mobile cycle')).toBeVisible();
+    await expect(todoPage.priorityPill('Mobile cycle')).toHaveText('high');
 
-    await todoPage.getPriorityPill('Mobile cycle').click();
-    await expect(todoPage.getPriorityPill('Mobile cycle')).toHaveText('medium');
+    await todoPage.priorityPill('Mobile cycle').click();
+    await expect(todoPage.priorityPill('Mobile cycle')).toHaveText('medium');
   });
 
   test('should show mobile add-priority button when no priority is set', async ({
@@ -102,7 +102,7 @@ test.describe('Todo App - Mobile Viewport', () => {
     await todoPage.addTodo('Mobile ghost');
 
     await expect(
-      todoPage.getPriorityPillAddMobile('Mobile ghost')
+      todoPage.priorityPillAddMobile('Mobile ghost')
     ).toBeVisible();
   });
 
@@ -113,8 +113,8 @@ test.describe('Todo App - Mobile Viewport', () => {
 
     await todoPage.clearCompleted();
 
-    await expect(todoPage.getTodoText('Remove me')).not.toBeVisible();
-    await expect(todoPage.getTodoText('Keep me')).toBeVisible();
+    await expect(todoPage.todoText('Remove me')).not.toBeVisible();
+    await expect(todoPage.todoText('Keep me')).toBeVisible();
   });
 
   test('should delete all todos on mobile', async ({ todoPage }) => {
@@ -124,7 +124,7 @@ test.describe('Todo App - Mobile Viewport', () => {
     await todoPage.deleteAll();
 
     await expect(
-      todoPage.getMessageByText('No tasks yet. Add one above!')
+      todoPage.messageByText('No tasks yet. Add one above!')
     ).toBeVisible();
   });
 
@@ -134,22 +134,22 @@ test.describe('Todo App - Mobile Viewport', () => {
     await todoPage.addTodo('Task');
     await todoPage.toggleTodo('Task');
 
-    await expect(todoPage.getDeleteAllButton()).not.toBeVisible();
-    await expect(todoPage.getClearCompletedButton()).toBeVisible();
+    await expect(todoPage.deleteAllButton()).not.toBeVisible();
+    await expect(todoPage.clearCompletedButton()).toBeVisible();
   });
 
   test('should cancel confirm dialog on mobile', async ({ todoPage }) => {
     await todoPage.addTodo('Task');
-    await todoPage.getDeleteAllButton().click();
+    await todoPage.deleteAllButton().click();
 
-    await expect(todoPage.confirmDialog.getDialog()).toBeVisible();
-    await todoPage.confirmDialog.getCancelButton().click();
+    await expect(todoPage.confirmDialog.dialog()).toBeVisible();
+    await todoPage.confirmDialog.cancelButton().click();
 
-    await expect(todoPage.getTodoText('Task')).toBeVisible();
+    await expect(todoPage.todoText('Task')).toBeVisible();
   });
 
   test('should display singular "item" on mobile', async ({ todoPage }) => {
-    const itemsLeft = todoPage.getItemsLeft();
+    const itemsLeft = todoPage.itemsLeft();
     await todoPage.addTodo('Only one');
 
     await expect(itemsLeft).toHaveText('1 ITEM LEFT');
@@ -159,7 +159,7 @@ test.describe('Todo App - Mobile Viewport', () => {
     await todoPage.addTodo('Mobile edit');
     await todoPage.editTodo('Mobile edit', 'Edited');
 
-    await expect(todoPage.getTodoText('Edited')).toBeVisible();
+    await expect(todoPage.todoText('Edited')).toBeVisible();
   });
 
   test('should enforce character limit when editing on mobile', async ({
@@ -167,8 +167,8 @@ test.describe('Todo App - Mobile Viewport', () => {
   }) => {
     await todoPage.addTodo('Short');
 
-    await todoPage.getTodoText('Short').dblclick();
-    const input = todoPage.getTodoEditInput();
+    await todoPage.todoText('Short').dblclick();
+    const input = todoPage.todoEditInput();
     await input.pressSequentially('a'.repeat(105));
 
     await expect(input).toHaveValue('a'.repeat(100));
