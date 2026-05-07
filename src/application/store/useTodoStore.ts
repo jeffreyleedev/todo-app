@@ -7,6 +7,7 @@ import {
   toggleTodo,
   filterTodos,
   countActive,
+  validateTodoText,
 } from '@/domain';
 import { LocalStorageTodoRepository } from '@/infrastructure';
 
@@ -44,13 +45,17 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   },
 
   toggleTodo: (id: string) => {
-    const newTodos = get().todos.map((t) => (t.id === id ? toggleTodo(t) : t));
+    const todos = get().todos;
+    if (!todos.some((t) => t.id === id)) return;
+    const newTodos = todos.map((t) => (t.id === id ? toggleTodo(t) : t));
     set({ todos: newTodos });
     repository.save(newTodos);
   },
 
   deleteTodo: (id: string) => {
-    const newTodos = get().todos.filter((t) => t.id !== id);
+    const todos = get().todos;
+    if (!todos.some((t) => t.id === id)) return;
+    const newTodos = todos.filter((t) => t.id !== id);
     set({ todos: newTodos });
     repository.save(newTodos);
   },
@@ -64,6 +69,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   },
 
   updateTodoText: (id: string, text: string) => {
+    validateTodoText(text);
     const newTodos = get().todos.map((t) => (t.id === id ? { ...t, text } : t));
     set({ todos: newTodos });
     repository.save(newTodos);

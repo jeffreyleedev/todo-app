@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useTodoStore } from './useTodoStore';
+import { TODO_MAX_LENGTH } from '@/domain';
 
 const { mockSave, mockLoad } = vi.hoisted(() => ({
   mockSave: vi.fn(),
@@ -66,12 +67,10 @@ describe('useTodoStore', () => {
   it('should be a no-op when toggling a non-existent todo', () => {
     useTodoStore.getState().addTodo('Test');
     mockSave.mockClear();
-    const todosBefore = useTodoStore.getState().todos;
     useTodoStore.getState().toggleTodo('non-existent-id');
     expect(useTodoStore.getState().todos).toHaveLength(1);
     expect(useTodoStore.getState().todos[0].completed).toBe(false);
-    // save is still called with the unchanged array
-    expect(mockSave).toHaveBeenCalledWith(todosBefore);
+    expect(mockSave).not.toHaveBeenCalled();
   });
 
   it('should delete a todo', () => {
@@ -88,7 +87,7 @@ describe('useTodoStore', () => {
     mockSave.mockClear();
     useTodoStore.getState().deleteTodo('non-existent-id');
     expect(useTodoStore.getState().todos).toHaveLength(1);
-    expect(mockSave).toHaveBeenCalledWith(useTodoStore.getState().todos);
+    expect(mockSave).not.toHaveBeenCalled();
   });
 
   it('should set filter', () => {
@@ -232,6 +231,17 @@ describe('useTodoStore', () => {
 
       expect(mockSave).toHaveBeenCalledTimes(1);
       expect(mockSave).toHaveBeenCalledWith(useTodoStore.getState().todos);
+    });
+
+    it('should throw when text exceeds TODO_MAX_LENGTH', () => {
+      useTodoStore.getState().addTodo('Test');
+      const id = useTodoStore.getState().todos[0].id;
+
+      expect(() =>
+        useTodoStore
+          .getState()
+          .updateTodoText(id, 'a'.repeat(TODO_MAX_LENGTH + 1))
+      ).toThrow();
     });
   });
 
