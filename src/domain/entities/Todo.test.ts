@@ -4,7 +4,7 @@ import {
   toggleTodo,
   TODO_MAX_LENGTH,
   isDuplicateTodo,
-  nextPriority,
+  cyclePriority,
 } from './Todo';
 
 describe('createTodo', () => {
@@ -127,27 +127,32 @@ describe('isDuplicateTodo', () => {
     const remaining = [createTodo('Walk dog')];
     expect(isDuplicateTodo('Buy milk', remaining)).toBe(false);
   });
+
+  it('should return false when the only matching todo is the excluded one', () => {
+    const todo = createTodo('Buy milk');
+    expect(isDuplicateTodo('Buy milk', [todo], todo.id)).toBe(false);
+  });
 });
 
-describe('nextPriority', () => {
+describe('cyclePriority', () => {
   it('should cycle from undefined to high', () => {
-    expect(nextPriority(undefined)).toBe('high');
+    expect(cyclePriority(undefined)).toBe('high');
   });
 
   it('should cycle from high to medium', () => {
-    expect(nextPriority('high')).toBe('medium');
+    expect(cyclePriority('high')).toBe('medium');
   });
 
   it('should cycle from medium to low', () => {
-    expect(nextPriority('medium')).toBe('low');
+    expect(cyclePriority('medium')).toBe('low');
   });
 
   it('should cycle from low to undefined', () => {
-    expect(nextPriority('low')).toBeUndefined();
+    expect(cyclePriority('low')).toBeUndefined();
   });
 
   it('should return high for unknown values', () => {
     // @ts-expect-error - testing fallback for invalid priority values
-    expect(nextPriority('unknown')).toBe('high');
+    expect(cyclePriority('unknown')).toBe('high');
   });
 });
