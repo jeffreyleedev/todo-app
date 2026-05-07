@@ -2,11 +2,11 @@ import { test, expect } from './fixtures';
 
 test.describe('Todo App', () => {
   test('should add a new todo', async ({ todoPage }) => {
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('Buy milk');
-    await todoPage.getAddButton().click();
+    await todoPage.addButton().click();
 
-    await expect(todoPage.getTodoText('Buy milk')).toBeVisible();
+    await expect(todoPage.todoText('Buy milk')).toBeVisible();
     await expect(input).toHaveValue('');
   });
 
@@ -14,7 +14,7 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Buy milk');
     await todoPage.toggleTodo('Buy milk');
 
-    await expect(todoPage.getTodoText('Buy milk')).toHaveClass(/line-through/);
+    await expect(todoPage.todoText('Buy milk')).toHaveClass(/line-through/);
   });
 
   test('should filter todos', async ({ todoPage }) => {
@@ -23,32 +23,32 @@ test.describe('Todo App', () => {
     await todoPage.toggleTodo('Completed task');
 
     await todoPage.filterBy('active');
-    await expect(todoPage.getTodoText('Active task')).toBeVisible();
-    await expect(todoPage.getTodoText('Completed task')).not.toBeVisible();
+    await expect(todoPage.todoText('Active task')).toBeVisible();
+    await expect(todoPage.todoText('Completed task')).not.toBeVisible();
 
     await todoPage.filterBy('completed');
-    await expect(todoPage.getTodoText('Active task')).not.toBeVisible();
-    await expect(todoPage.getTodoText('Completed task')).toBeVisible();
+    await expect(todoPage.todoText('Active task')).not.toBeVisible();
+    await expect(todoPage.todoText('Completed task')).toBeVisible();
 
     await todoPage.filterBy('all');
-    await expect(todoPage.getTodoText('Active task')).toBeVisible();
-    await expect(todoPage.getTodoText('Completed task')).toBeVisible();
+    await expect(todoPage.todoText('Active task')).toBeVisible();
+    await expect(todoPage.todoText('Completed task')).toBeVisible();
   });
 
   test('should delete a todo', async ({ todoPage }) => {
     await todoPage.addTodo('Delete me');
     await todoPage.deleteTodo('Delete me');
 
-    await expect(todoPage.getTodoText('Delete me')).not.toBeVisible();
+    await expect(todoPage.todoText('Delete me')).not.toBeVisible();
   });
 
   test('should persist todos on reload', async ({ page, todoPage }) => {
     await todoPage.addTodo('Persistent task');
-    await expect(todoPage.getTodoText('Persistent task')).toBeVisible();
+    await expect(todoPage.todoText('Persistent task')).toBeVisible();
 
     await page.reload();
 
-    await expect(todoPage.getTodoText('Persistent task')).toBeVisible();
+    await expect(todoPage.todoText('Persistent task')).toBeVisible();
   });
 
   test('should clear completed todos', async ({ todoPage }) => {
@@ -57,14 +57,14 @@ test.describe('Todo App', () => {
     await todoPage.toggleTodo('Task 1');
     await todoPage.clearCompleted();
 
-    await expect(todoPage.getTodoText('Task 1')).not.toBeVisible();
-    await expect(todoPage.getTodoText('Task 2')).toBeVisible();
+    await expect(todoPage.todoText('Task 1')).not.toBeVisible();
+    await expect(todoPage.todoText('Task 2')).toBeVisible();
   });
 
   test('should display the correct number of items left through a full lifecycle', async ({
     todoPage,
   }) => {
-    const itemsLeft = todoPage.getItemsLeft();
+    const itemsLeft = todoPage.itemsLeft();
     await expect(itemsLeft).toHaveText('0 ITEMS LEFT');
 
     await todoPage.addTodo('Task A');
@@ -82,7 +82,7 @@ test.describe('Todo App', () => {
     todoPage,
   }) => {
     await expect(
-      todoPage.getMessageByText('No tasks yet. Add one above!')
+      todoPage.messageByText('No tasks yet. Add one above!')
     ).toBeVisible();
   });
 
@@ -94,35 +94,35 @@ test.describe('Todo App', () => {
     await todoPage.filterBy('active');
 
     await expect(
-      todoPage.getMessageByText('No tasks in this category.')
+      todoPage.messageByText('No tasks in this category.')
     ).toBeVisible();
   });
 
   test('should not add a todo when input is empty', async ({ todoPage }) => {
-    const addButton = todoPage.getAddButton();
+    const addButton = todoPage.addButton();
     await expect(addButton).toBeDisabled();
 
     // Pressing enter should also not add it (since form prevents empty submit)
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.focus();
     await input.press('Enter');
 
     await expect(
-      todoPage.getMessageByText('No tasks yet. Add one above!')
+      todoPage.messageByText('No tasks yet. Add one above!')
     ).toBeVisible();
   });
 
   test('should trim whitespace from input before adding', async ({
     todoPage,
   }) => {
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('  Trim me  ');
-    await todoPage.getAddButton().click();
+    await todoPage.addButton().click();
 
-    await expect(todoPage.getTodoText('Trim me')).toBeVisible();
+    await expect(todoPage.todoText('Trim me')).toBeVisible();
 
     // Verify the stored text was trimmed, not the raw input
-    const todoText = todoPage.getTodoText('Trim me');
+    const todoText = todoPage.todoText('Trim me');
     await expect(todoText).toHaveText('Trim me');
   });
 
@@ -131,29 +131,27 @@ test.describe('Todo App', () => {
   }) => {
     await todoPage.addTodo('Toggle back');
     await todoPage.toggleTodo('Toggle back');
-    await expect(todoPage.getTodoText('Toggle back')).toHaveClass(
-      /line-through/
-    );
+    await expect(todoPage.todoText('Toggle back')).toHaveClass(/line-through/);
 
     await todoPage.toggleTodo('Toggle back');
-    await expect(todoPage.getTodoText('Toggle back')).not.toHaveClass(
+    await expect(todoPage.todoText('Toggle back')).not.toHaveClass(
       /line-through/
     );
   });
 
   test('should add a todo using only the keyboard', async ({ todoPage }) => {
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.focus();
     await input.fill('Keyboard task');
     await input.press('Enter');
 
-    await expect(todoPage.getTodoText('Keyboard task')).toBeVisible();
+    await expect(todoPage.todoText('Keyboard task')).toBeVisible();
   });
 
   test('should not allow entering more than 100 characters', async ({
     todoPage,
   }) => {
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     const longText = 'a'.repeat(105);
 
     await input.fill(longText);
@@ -164,8 +162,8 @@ test.describe('Todo App', () => {
   test('should show warning color when near character limit', async ({
     todoPage,
   }) => {
-    const input = todoPage.getNewTodoInput();
-    const charCounter = todoPage.getCharCounter();
+    const input = todoPage.newTodoInput();
+    const charCounter = todoPage.charCounter();
 
     await input.fill('a'.repeat(90));
 
@@ -175,8 +173,8 @@ test.describe('Todo App', () => {
   test('should show error color when at character limit', async ({
     todoPage,
   }) => {
-    const input = todoPage.getNewTodoInput();
-    const charCounter = todoPage.getCharCounter();
+    const input = todoPage.newTodoInput();
+    const charCounter = todoPage.charCounter();
 
     await input.fill('a'.repeat(100));
 
@@ -190,7 +188,7 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Completed todo');
     await todoPage.toggleTodo('Completed todo');
 
-    const separator = todoPage.getSeparator();
+    const separator = todoPage.separator();
     await expect(separator).toBeVisible();
   });
 
@@ -201,9 +199,9 @@ test.describe('Todo App', () => {
 
     await todoPage.deleteAll();
 
-    await expect(todoPage.getTodoText('Task 1')).not.toBeVisible();
-    await expect(todoPage.getTodoText('Task 2')).not.toBeVisible();
-    await expect(todoPage.getTodoText('Task 3')).not.toBeVisible();
+    await expect(todoPage.todoText('Task 1')).not.toBeVisible();
+    await expect(todoPage.todoText('Task 2')).not.toBeVisible();
+    await expect(todoPage.todoText('Task 3')).not.toBeVisible();
   });
 
   test('should hide Delete all when all todos are completed on the All filter', async ({
@@ -212,22 +210,22 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Task');
     await todoPage.toggleTodo('Task');
 
-    await expect(todoPage.getDeleteAllButton()).not.toBeVisible();
-    await expect(todoPage.getClearCompletedButton()).toBeVisible();
+    await expect(todoPage.deleteAllButton()).not.toBeVisible();
+    await expect(todoPage.clearCompletedButton()).toBeVisible();
   });
 
   test('should display singular "item" for exactly one active todo', async ({
     todoPage,
   }) => {
-    const itemsLeft = todoPage.getItemsLeft();
+    const itemsLeft = todoPage.itemsLeft();
     await todoPage.addTodo('Single task');
 
     await expect(itemsLeft).toHaveText('1 ITEM LEFT');
   });
 
   test('should display page title and subtitle', async ({ todoPage }) => {
-    await expect(todoPage.getHeading()).toBeVisible();
-    await expect(todoPage.getSubtitle()).toBeVisible();
+    await expect(todoPage.heading()).toBeVisible();
+    await expect(todoPage.subtitle()).toBeVisible();
   });
 
   test('should show check icon inside checkbox when todo is completed', async ({
@@ -236,7 +234,7 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Completed task');
     await todoPage.toggleTodo('Completed task');
 
-    const checkIcon = todoPage.getCheckIconLocator('Completed task');
+    const checkIcon = todoPage.checkIconLocator('Completed task');
 
     await expect(checkIcon).toBeVisible();
   });
@@ -245,34 +243,34 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Task');
 
     await todoPage.filterBy('active');
-    await expect(todoPage.getFilterButton('active')).toHaveClass(/bg-mint/);
-    await expect(todoPage.getFilterButton('all')).not.toHaveClass(/bg-mint/);
+    await expect(todoPage.filterButton('active')).toHaveClass(/bg-mint/);
+    await expect(todoPage.filterButton('all')).not.toHaveClass(/bg-mint/);
 
     await todoPage.filterBy('completed');
-    await expect(todoPage.getFilterButton('completed')).toHaveClass(/bg-mint/);
+    await expect(todoPage.filterButton('completed')).toHaveClass(/bg-mint/);
   });
 
   test('should not add a duplicate active todo', async ({ todoPage }) => {
     await todoPage.addTodo('Buy milk');
 
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('Buy milk');
 
-    const addButton = todoPage.getAddButton();
+    const addButton = todoPage.addButton();
     await expect(addButton).toBeDisabled();
 
     await input.press('Enter');
-    const todos = todoPage.getTodoItem('Buy milk');
+    const todos = todoPage.todoItem('Buy milk');
     await expect(todos).toHaveCount(1);
   });
 
   test('should treat duplicates case-insensitively', async ({ todoPage }) => {
     await todoPage.addTodo('Buy milk');
 
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('buy MILK');
 
-    const addButton = todoPage.getAddButton();
+    const addButton = todoPage.addButton();
     await expect(addButton).toBeDisabled();
   });
 
@@ -281,10 +279,10 @@ test.describe('Todo App', () => {
   }) => {
     await todoPage.addTodo('Buy milk');
 
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('  Buy milk  ');
 
-    const addButton = todoPage.getAddButton();
+    const addButton = todoPage.addButton();
     await expect(addButton).toBeDisabled();
   });
 
@@ -292,10 +290,10 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Buy milk');
     await todoPage.toggleTodo('Buy milk');
 
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('Buy milk');
 
-    const addButton = todoPage.getAddButton();
+    const addButton = todoPage.addButton();
     await expect(addButton).toBeEnabled();
   });
 
@@ -303,10 +301,10 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Buy milk');
     await todoPage.deleteTodo('Buy milk');
 
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('Buy milk');
 
-    const addButton = todoPage.getAddButton();
+    const addButton = todoPage.addButton();
     await expect(addButton).toBeEnabled();
   });
 
@@ -315,10 +313,10 @@ test.describe('Todo App', () => {
   }) => {
     await todoPage.addTodo('Buy milk');
 
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('Buy milk');
 
-    const addButton = todoPage.getAddButton();
+    const addButton = todoPage.addButton();
     await expect(addButton).toBeDisabled();
 
     await input.fill('Buy eggs');
@@ -330,21 +328,21 @@ test.describe('Todo App', () => {
   }) => {
     await todoPage.addTodo('Buy milk');
 
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     await input.fill('Buy milk');
     await input.press('Enter');
 
-    const todos = todoPage.getTodoItem('Buy milk');
+    const todos = todoPage.todoItem('Buy milk');
     await expect(todos).toHaveCount(1);
   });
 
   test('should clear input after successful submission', async ({
     todoPage,
   }) => {
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
 
     await input.fill('Clear me');
-    await todoPage.getAddButton().click();
+    await todoPage.addButton().click();
 
     await expect(input).toHaveValue('');
 
@@ -391,11 +389,11 @@ test.describe('Todo App', () => {
     await todoPage.addTodo('Completed task');
     await todoPage.toggleTodo('Completed task');
 
-    await todoPage.getClearCompletedButton().click();
-    await expect(todoPage.confirmDialog.getDialog()).toBeVisible();
-    await todoPage.confirmDialog.getCloseButton().click();
+    await todoPage.clearCompletedButton().click();
+    await expect(todoPage.confirmDialog.dialog()).toBeVisible();
+    await todoPage.confirmDialog.closeButton().click();
 
-    await expect(todoPage.getTodoText('Completed task')).toBeVisible();
+    await expect(todoPage.todoText('Completed task')).toBeVisible();
   });
 
   test('should be able to clear completed when filter is completed', async ({
@@ -408,21 +406,21 @@ test.describe('Todo App', () => {
     await todoPage.filterBy('completed');
     await todoPage.clearCompleted();
 
-    await expect(todoPage.getTodoText('Done')).not.toBeVisible();
+    await expect(todoPage.todoText('Done')).not.toBeVisible();
     await todoPage.filterBy('all');
-    await expect(todoPage.getTodoText('Active')).toBeVisible();
+    await expect(todoPage.todoText('Active')).toBeVisible();
   });
 
   test('should add a todo with exactly 100 characters', async ({
     todoPage,
   }) => {
-    const input = todoPage.getNewTodoInput();
+    const input = todoPage.newTodoInput();
     const hundredChars = 'a'.repeat(100);
 
     await input.fill(hundredChars);
-    await todoPage.getAddButton().click();
+    await todoPage.addButton().click();
 
-    await expect(todoPage.getTodoText(hundredChars)).toBeVisible();
+    await expect(todoPage.todoText(hundredChars)).toBeVisible();
   });
 
   test('should maintain order when drag-and-drop with mixed active and completed items', async ({
@@ -445,9 +443,9 @@ test.describe('Todo App', () => {
     todoPage,
   }) => {
     await todoPage.addTodo('Task');
-    await todoPage.getDeleteAllButton().click();
+    await todoPage.deleteAllButton().click();
 
-    const dialog = todoPage.confirmDialog.getDialog();
+    const dialog = todoPage.confirmDialog.dialog();
     await expect(dialog).toBeVisible();
     await expect(dialog).toHaveAttribute('role', 'dialog');
     await expect(dialog).toHaveAttribute('aria-modal', 'true');
@@ -460,34 +458,34 @@ test.describe('Todo App', () => {
       await todoPage.addTodo('Original text');
       await todoPage.editTodo('Original text', 'Updated text');
 
-      await expect(todoPage.getTodoText('Updated text')).toBeVisible();
-      await expect(todoPage.getTodoItem('Original text')).toHaveCount(0);
+      await expect(todoPage.todoText('Updated text')).toBeVisible();
+      await expect(todoPage.todoItem('Original text')).toHaveCount(0);
     });
 
     test('should cancel edit via Escape', async ({ todoPage }) => {
       await todoPage.addTodo('Keep me');
       await todoPage.cancelEdit('Keep me', 'Changed');
 
-      await expect(todoPage.getTodoText('Keep me')).toBeVisible();
-      await expect(todoPage.getTodoText('Keep me')).toHaveText('Keep me');
+      await expect(todoPage.todoText('Keep me')).toBeVisible();
+      await expect(todoPage.todoText('Keep me')).toHaveText('Keep me');
     });
 
     test('should save edit via blur', async ({ todoPage }) => {
       await todoPage.addTodo('Blur me');
-      await todoPage.getTodoText('Blur me').dblclick();
-      await todoPage.getTodoEditInput().fill('Saved on blur');
-      await todoPage.getTodoEditInput().blur();
+      await todoPage.todoText('Blur me').dblclick();
+      await todoPage.todoEditInput().fill('Saved on blur');
+      await todoPage.todoEditInput().blur();
 
-      await expect(todoPage.getTodoText('Saved on blur')).toBeVisible();
+      await expect(todoPage.todoText('Saved on blur')).toBeVisible();
     });
 
     test('should not edit a completed todo', async ({ todoPage }) => {
       await todoPage.addTodo('Completed');
       await todoPage.toggleTodo('Completed');
 
-      await todoPage.getTodoText('Completed').dblclick();
+      await todoPage.todoText('Completed').dblclick();
 
-      await expect(todoPage.getTodoEditInput()).not.toBeAttached();
+      await expect(todoPage.todoEditInput()).not.toBeAttached();
     });
 
     test('should not allow entering more than 100 characters', async ({
@@ -495,8 +493,8 @@ test.describe('Todo App', () => {
     }) => {
       await todoPage.addTodo('Short');
 
-      await todoPage.getTodoText('Short').dblclick();
-      const input = todoPage.getTodoEditInput();
+      await todoPage.todoText('Short').dblclick();
+      const input = todoPage.todoEditInput();
       await input.pressSequentially('a'.repeat(105));
 
       await expect(input).toHaveValue('a'.repeat(100));
@@ -505,8 +503,8 @@ test.describe('Todo App', () => {
     test('should not save empty text', async ({ todoPage }) => {
       await todoPage.addTodo('Not empty');
 
-      await todoPage.getTodoText('Not empty').dblclick();
-      const input = todoPage.getTodoEditInput();
+      await todoPage.todoText('Not empty').dblclick();
+      const input = todoPage.todoEditInput();
       await input.fill('');
       await input.press('Enter');
 
@@ -518,8 +516,8 @@ test.describe('Todo App', () => {
       await todoPage.addTodo('Existing');
       await todoPage.addTodo('Edit me');
 
-      await todoPage.getTodoText('Edit me').dblclick();
-      const input = todoPage.getTodoEditInput();
+      await todoPage.todoText('Edit me').dblclick();
+      const input = todoPage.todoEditInput();
       await input.fill('Existing');
       await input.press('Enter');
 
@@ -533,7 +531,7 @@ test.describe('Todo App', () => {
 
       await page.reload();
 
-      await expect(todoPage.getTodoText('Edited')).toBeVisible();
+      await expect(todoPage.todoText('Edited')).toBeVisible();
     });
 
     test('should show warning counter near character limit', async ({
@@ -541,11 +539,11 @@ test.describe('Todo App', () => {
     }) => {
       await todoPage.addTodo('Short');
 
-      await todoPage.getTodoText('Short').dblclick();
-      const input = todoPage.getTodoEditInput();
+      await todoPage.todoText('Short').dblclick();
+      const input = todoPage.todoEditInput();
       await input.fill('a'.repeat(90));
 
-      await expect(todoPage.getTodoEditCharCounter()).toHaveClass(
+      await expect(todoPage.todoEditCharCounter()).toHaveClass(
         /text-accent-yellow/
       );
     });
@@ -555,11 +553,11 @@ test.describe('Todo App', () => {
     }) => {
       await todoPage.addTodo('Short');
 
-      await todoPage.getTodoText('Short').dblclick();
-      const input = todoPage.getTodoEditInput();
+      await todoPage.todoText('Short').dblclick();
+      const input = todoPage.todoEditInput();
       await input.pressSequentially('a'.repeat(100));
 
-      await expect(todoPage.getTodoEditCharCounter()).toHaveClass(
+      await expect(todoPage.todoEditCharCounter()).toHaveClass(
         /text-ultraviolet/
       );
     });
@@ -569,9 +567,9 @@ test.describe('Todo App', () => {
     test('should add a todo without priority', async ({ todoPage }) => {
       await todoPage.addTodo('No priority');
 
-      const link = todoPage.getTodoItem('No priority');
+      const link = todoPage.todoItem('No priority');
       await expect(link).toBeVisible();
-      await expect(todoPage.getPriorityPillAdd('No priority')).toBeAttached();
+      await expect(todoPage.priorityPillAdd('No priority')).toBeAttached();
     });
 
     test('should set priority on an item that has none', async ({
@@ -581,15 +579,15 @@ test.describe('Todo App', () => {
 
       await todoPage.addPriorityToItem('Set priority');
 
-      await expect(todoPage.getPriorityPill('Set priority')).toBeVisible();
-      await expect(todoPage.getPriorityPill('Set priority')).toHaveText('high');
+      await expect(todoPage.priorityPill('Set priority')).toBeVisible();
+      await expect(todoPage.priorityPill('Set priority')).toHaveText('high');
     });
 
     test('should cycle priority on an existing item', async ({ todoPage }) => {
       await todoPage.addTodo('Cycle me');
       await todoPage.addPriorityToItem('Cycle me');
 
-      const pill = todoPage.getPriorityPill('Cycle me');
+      const pill = todoPage.priorityPill('Cycle me');
       await expect(pill).toHaveText('high');
 
       await pill.click();
@@ -611,8 +609,8 @@ test.describe('Todo App', () => {
 
       await page.reload();
 
-      await expect(todoPage.getPriorityPill('Persist priority')).toBeVisible();
-      await expect(todoPage.getPriorityPill('Persist priority')).toHaveText(
+      await expect(todoPage.priorityPill('Persist priority')).toBeVisible();
+      await expect(todoPage.priorityPill('Persist priority')).toHaveText(
         'high'
       );
     });
@@ -625,10 +623,8 @@ test.describe('Todo App', () => {
 
       await todoPage.toggleTodo('Complete me');
 
-      await expect(todoPage.getPriorityPill('Complete me')).not.toBeAttached();
-      await expect(
-        todoPage.getPriorityPillAdd('Complete me')
-      ).not.toBeAttached();
+      await expect(todoPage.priorityPill('Complete me')).not.toBeAttached();
+      await expect(todoPage.priorityPillAdd('Complete me')).not.toBeAttached();
     });
 
     test('should render the correct color class for each priority level', async ({
@@ -639,22 +635,20 @@ test.describe('Todo App', () => {
 
       await todoPage.addTodo('Color medium');
       await todoPage.addPriorityToItem('Color medium');
-      await todoPage.getPriorityPill('Color medium').click();
+      await todoPage.priorityPill('Color medium').click();
 
       await todoPage.addTodo('Color low');
       await todoPage.addPriorityToItem('Color low');
-      await todoPage.getPriorityPill('Color low').click();
-      await todoPage.getPriorityPill('Color low').click();
+      await todoPage.priorityPill('Color low').click();
+      await todoPage.priorityPill('Color low').click();
 
-      await expect(todoPage.getPriorityPill('Color high')).toHaveClass(
+      await expect(todoPage.priorityPill('Color high')).toHaveClass(
         /bg-ultraviolet/
       );
-      await expect(todoPage.getPriorityPill('Color medium')).toHaveClass(
+      await expect(todoPage.priorityPill('Color medium')).toHaveClass(
         /bg-accent-yellow/
       );
-      await expect(todoPage.getPriorityPill('Color low')).toHaveClass(
-        /bg-mint/
-      );
+      await expect(todoPage.priorityPill('Color low')).toHaveClass(/bg-mint/);
     });
   });
 
@@ -667,13 +661,13 @@ test.describe('Todo App', () => {
     await todoPage.toggleTodo('Done task');
 
     await todoPage.filterBy('completed');
-    await expect(todoPage.getTodoText('Active task')).not.toBeVisible();
+    await expect(todoPage.todoText('Active task')).not.toBeVisible();
 
     await page.reload();
 
-    await expect(todoPage.getFilterButton('all')).toHaveClass(/bg-mint/);
-    await expect(todoPage.getTodoText('Active task')).toBeVisible();
-    await expect(todoPage.getTodoText('Done task')).toBeVisible();
+    await expect(todoPage.filterButton('all')).toHaveClass(/bg-mint/);
+    await expect(todoPage.todoText('Active task')).toBeVisible();
+    await expect(todoPage.todoText('Done task')).toBeVisible();
   });
 
   test('should close confirm dialog without action on Escape', async ({
@@ -682,12 +676,12 @@ test.describe('Todo App', () => {
   }) => {
     await todoPage.addTodo('Keep me');
 
-    await todoPage.getDeleteAllButton().click();
-    await expect(todoPage.confirmDialog.getDialog()).toBeVisible();
+    await todoPage.deleteAllButton().click();
+    await expect(todoPage.confirmDialog.dialog()).toBeVisible();
 
     await page.keyboard.press('Escape');
-    await expect(todoPage.confirmDialog.getDialog()).not.toBeVisible();
+    await expect(todoPage.confirmDialog.dialog()).not.toBeVisible();
 
-    await expect(todoPage.getTodoText('Keep me')).toBeVisible();
+    await expect(todoPage.todoText('Keep me')).toBeVisible();
   });
 });
