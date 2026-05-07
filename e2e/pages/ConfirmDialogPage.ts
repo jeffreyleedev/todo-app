@@ -8,8 +8,7 @@ export class ConfirmDialogPage {
   confirmButton = (): Locator =>
     this.page.getByTestId('confirm-dialog-confirm');
 
-  cancelButton = (): Locator =>
-    this.page.getByTestId('confirm-dialog-cancel');
+  cancelButton = (): Locator => this.page.getByTestId('confirm-dialog-cancel');
 
   closeButton = (): Locator => this.page.getByTestId('confirm-dialog-close');
 }

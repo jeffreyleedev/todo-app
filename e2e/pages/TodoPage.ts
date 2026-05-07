@@ -10,8 +10,7 @@ export class TodoPage {
 
   /* Locators */
 
-  newTodoInput = (): Locator =>
-    this.page.getByPlaceholder('Add a new task...');
+  newTodoInput = (): Locator => this.page.getByPlaceholder('Add a new task...');
 
   addButton = (): Locator => this.page.getByTestId('add-todo-button');
 
@@ -46,11 +45,9 @@ export class TodoPage {
 
   separator = (): Locator => this.page.getByTestId('todo-separator');
 
-  heading = (): Locator =>
-    this.page.getByRole('heading', { name: 'My Tasks' });
+  heading = (): Locator => this.page.getByRole('heading', { name: 'My Tasks' });
 
-  subtitle = (): Locator =>
-    this.page.getByText('Stay focused and organized.');
+  subtitle = (): Locator => this.page.getByText('Stay focused and organized.');
 
   checkIconLocator = (text: string): Locator =>
     this.page

@@ -101,9 +101,7 @@ test.describe('Todo App - Mobile Viewport', () => {
   }) => {
     await todoPage.addTodo('Mobile ghost');
 
-    await expect(
-      todoPage.priorityPillAddMobile('Mobile ghost')
-    ).toBeVisible();
+    await expect(todoPage.priorityPillAddMobile('Mobile ghost')).toBeVisible();
   });
 
   test('should clear completed todos on mobile', async ({ todoPage }) => {

@@ -624,9 +624,7 @@ test.describe('Todo App', () => {
       await todoPage.toggleTodo('Complete me');
 
       await expect(todoPage.priorityPill('Complete me')).not.toBeAttached();
-      await expect(
-        todoPage.priorityPillAdd('Complete me')
-      ).not.toBeAttached();
+      await expect(todoPage.priorityPillAdd('Complete me')).not.toBeAttached();
     });
 
     test('should render the correct color class for each priority level', async ({
