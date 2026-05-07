@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button } from './Button';
 import { IconButton } from './IconButton';
 
@@ -16,6 +17,14 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onCancel]);
+
   return (
     <div
       data-testid="confirm-dialog-overlay"

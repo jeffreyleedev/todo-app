@@ -10,10 +10,14 @@ export interface Todo {
   priority?: Priority;
 }
 
-export function createTodo(text: string): Todo {
+export function validateTodoText(text: string): void {
   if (text.length > TODO_MAX_LENGTH) {
     throw new Error(`Todo text cannot exceed ${TODO_MAX_LENGTH} characters.`);
   }
+}
+
+export function createTodo(text: string): Todo {
+  validateTodoText(text);
   return {
     id: crypto.randomUUID(),
     text,
@@ -22,7 +26,8 @@ export function createTodo(text: string): Todo {
   };
 }
 
-export function nextPriority(
+// Two `undefined` entries: one to enter the cycle from no priority, one to exit back to none.
+export function cyclePriority(
   current: Priority | undefined
 ): Priority | undefined {
   const order: (Priority | undefined)[] = [

@@ -1,29 +1,31 @@
 import { useState, useRef, useEffect } from 'react';
-import type { Todo, Priority } from '@/domain';
+import type { Todo } from '@/domain';
 import { useTodoStore } from '@/application';
 import { IconButton } from '@/presentation/shared/components/IconButton';
 import { Icon } from '@/presentation/shared/components/Icon';
 import { cn } from '@/presentation/shared/utils/cn';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { nextPriority, TODO_MAX_LENGTH, isDuplicateTodo } from '@/domain';
+import { TODO_MAX_LENGTH, isDuplicateTodo } from '@/domain';
+import { useShallow } from 'zustand/shallow';
+import { useCharacterCount } from '@/presentation/shared/hooks/useCharacterCount';
+import { PriorityButton } from './PriorityButton';
 
 interface TodoItemProps {
   todo: Todo;
 }
 
-const priorityColors: Record<Priority, string> = {
-  high: 'bg-ultraviolet text-white font-kicker px-10 py-4 rounded-20',
-  medium: 'bg-accent-yellow text-black font-kicker px-10 py-4 rounded-20',
-  low: 'bg-mint text-black font-kicker px-10 py-4 rounded-20',
-};
-
 export function TodoItem({ todo }: TodoItemProps) {
-  const toggleTodo = useTodoStore((state) => state.toggleTodo);
-  const deleteTodo = useTodoStore((state) => state.deleteTodo);
-  const setPriority = useTodoStore((state) => state.setPriority);
-  const updateTodoText = useTodoStore((state) => state.updateTodoText);
-  const todos = useTodoStore((state) => state.todos);
+  const { toggleTodo, deleteTodo, setPriority, updateTodoText, todos } =
+    useTodoStore(
+      useShallow((state) => ({
+        toggleTodo: state.toggleTodo,
+        deleteTodo: state.deleteTodo,
+        setPriority: state.setPriority,
+        updateTodoText: state.updateTodoText,
+        todos: state.todos,
+      }))
+    );
 
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState('');
@@ -66,8 +68,7 @@ export function TodoItem({ todo }: TodoItemProps) {
     }
   };
 
-  const isNearLimit = editText.length >= TODO_MAX_LENGTH * 0.9;
-  const isAtLimit = editText.length >= TODO_MAX_LENGTH;
+  const { isNearLimit, isAtLimit } = useCharacterCount(editText);
 
   const {
     attributes,
@@ -169,41 +170,11 @@ export function TodoItem({ todo }: TodoItemProps) {
           )}
         </div>
         <div className="flex items-center gap-12 shrink-0">
-          {!todo.completed &&
-            !isEditing &&
-            (todo.priority ? (
-              <button
-                type="button"
-                data-testid="priority-pill"
-                onClick={() =>
-                  setPriority(todo.id, nextPriority(todo.priority))
-                }
-                className={cn(
-                  priorityColors[todo.priority],
-                  'transition-opacity hover:opacity-80'
-                )}
-              >
-                {todo.priority}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setPriority(todo.id, 'high')}
-                data-testid="priority-pill-add"
-                className="font-kicker px-10 py-4 rounded-20 bg-slate text-text-secondary hover:text-mint hidden md:inline-flex md:opacity-0 md:group-hover:opacity-100 transition-opacity"
-              >
-                +PRIORITY
-              </button>
-            ))}
-          {!todo.completed && !isEditing && !todo.priority && (
-            <button
-              type="button"
-              onClick={() => setPriority(todo.id, 'high')}
-              className="md:hidden w-[24px] h-[24px] flex items-center justify-center rounded-half text-text-secondary hover:text-mint transition-colors"
-              data-testid="priority-pill-add-mobile"
-            >
-              <Icon name="add" className="text-[16px]" />
-            </button>
+          {!todo.completed && !isEditing && (
+            <PriorityButton
+              priority={todo.priority}
+              onSetPriority={(p) => setPriority(todo.id, p)}
+            />
           )}
           {!isEditing && (
             <IconButton

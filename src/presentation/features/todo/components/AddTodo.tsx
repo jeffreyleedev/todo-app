@@ -3,6 +3,7 @@ import { useTodoStore } from '@/application';
 import { TODO_MAX_LENGTH, isDuplicateTodo } from '@/domain';
 import { Button } from '@/presentation/shared/components/Button';
 import { cn } from '@/presentation/shared/utils/cn';
+import { useCharacterCount } from '@/presentation/shared/hooks/useCharacterCount';
 
 export function AddTodo() {
   const [text, setText] = useState('');
@@ -20,8 +21,7 @@ export function AddTodo() {
     }
   };
 
-  const isNearLimit = text.length >= TODO_MAX_LENGTH * 0.9;
-  const isAtLimit = text.length >= TODO_MAX_LENGTH;
+  const { isNearLimit, isAtLimit } = useCharacterCount(text);
 
   return (
     <div className="flex flex-col gap-12 w-full pl-20">
