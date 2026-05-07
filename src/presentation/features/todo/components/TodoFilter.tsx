@@ -14,18 +14,18 @@ export function TodoFilter() {
 
   return (
     <div className="flex gap-8 order-1 sm:order-2">
-      {filters.map((f) => (
+      {filters.map((filterOption) => (
         <button
-          key={f.value}
-          onClick={() => setFilter(f.value)}
+          key={filterOption.value}
+          onClick={() => setFilter(filterOption.value)}
           className={cn(
             'font-kicker px-12 py-4 rounded-20 transition-colors duration-150',
-            filter === f.value
+            filter === filterOption.value
               ? 'bg-mint text-black'
               : 'bg-slate text-text-secondary hover:text-text-primary'
           )}
         >
-          {f.label}
+          {filterOption.label}
         </button>
       ))}
     </div>
