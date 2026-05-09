@@ -26,11 +26,7 @@ export function useTheme() {
 
   const toggle = useCallback(() => {
     const next = theme === 'dark' ? 'light' : 'dark';
-    if (next === 'light') {
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-    }
+    document.documentElement.classList.toggle('light', next === 'light');
     localStorage.setItem('theme', next);
   }, [theme]);
 

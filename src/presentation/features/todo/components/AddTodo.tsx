@@ -1,27 +1,28 @@
 import { useState } from 'react';
 import { useTodoStore } from '@/application';
 import { TODO_MAX_LENGTH, isDuplicateTodo } from '@/domain';
+import { useShallow } from 'zustand/shallow';
 import { Button } from '@/presentation/shared/components/Button';
-import { cn } from '@/presentation/shared/utils/cn';
-import { useCharacterCount } from '@/presentation/shared/hooks/useCharacterCount';
+import { CharCounter } from '@/presentation/shared/components/CharCounter';
 
 export function AddTodo() {
   const [text, setText] = useState('');
-  const addTodo = useTodoStore((state) => state.addTodo);
-  const todos = useTodoStore((state) => state.todos);
+  const { addTodo, todos } = useTodoStore(
+    useShallow((state) => ({ addTodo: state.addTodo, todos: state.todos }))
+  );
 
   const trimmed = text.trim();
   const isDuplicate = isDuplicateTodo(trimmed, todos);
+  const canSubmit =
+    !!trimmed && trimmed.length <= TODO_MAX_LENGTH && !isDuplicate;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (trimmed && trimmed.length <= TODO_MAX_LENGTH && !isDuplicate) {
+    if (canSubmit) {
       addTodo(trimmed);
       setText('');
     }
   };
-
-  const { isNearLimit, isAtLimit } = useCharacterCount(text);
 
   return (
     <div className="flex flex-col gap-12 w-full pl-20">
@@ -39,25 +40,17 @@ export function AddTodo() {
           data-testid="add-todo-button"
           variant="primary"
           size="md"
-          disabled={!trimmed || trimmed.length > TODO_MAX_LENGTH || isDuplicate}
+          disabled={!canSubmit}
         >
           Add
         </Button>
       </form>
       <div className="flex items-center justify-end">
-        <div
+        <CharCounter
+          length={text.length}
+          max={TODO_MAX_LENGTH}
           data-testid="char-counter"
-          className={cn(
-            'font-caption',
-            isAtLimit
-              ? 'text-ultraviolet'
-              : isNearLimit
-                ? 'text-accent-yellow'
-                : 'text-text-secondary'
-          )}
-        >
-          {text.length} / {TODO_MAX_LENGTH}
-        </div>
+        />
       </div>
     </div>
   );

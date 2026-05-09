@@ -1,5 +1,5 @@
-import type { Todo } from '../entities/Todo';
-import type { Filter } from '../entities/Filter';
+import type { Todo } from '@/domain/entities/Todo';
+import type { Filter } from '@/domain/entities/Filter';
 
 export function filterTodos(todos: Todo[], filter: Filter): Todo[] {
   switch (filter) {
@@ -10,12 +10,4 @@ export function filterTodos(todos: Todo[], filter: Filter): Todo[] {
     default:
       return todos;
   }
-}
-
-export function countActive(todos: Todo[]): number {
-  return todos.filter((t) => !t.completed).length;
-}
-
-export function countCompleted(todos: Todo[]): number {
-  return todos.filter((t) => t.completed).length;
 }

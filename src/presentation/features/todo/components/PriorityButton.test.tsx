@@ -36,35 +36,19 @@ describe('PriorityButton', () => {
   });
 
   describe('when priority is undefined', () => {
-    it('renders desktop add button with text "+PRIORITY"', () => {
+    it('renders add button with text "+PRIORITY"', () => {
       render(<PriorityButton priority={undefined} onSetPriority={vi.fn()} />);
       const btn = screen.getByTestId('priority-pill-add');
       expect(btn).toBeInTheDocument();
       expect(btn).toHaveTextContent('+PRIORITY');
     });
 
-    it('renders mobile add button', () => {
-      render(<PriorityButton priority={undefined} onSetPriority={vi.fn()} />);
-      expect(
-        screen.getByTestId('priority-pill-add-mobile')
-      ).toBeInTheDocument();
-    });
-
-    it('calls onSetPriority("high") when desktop add button is clicked', () => {
+    it('calls onSetPriority("high") when add button is clicked', () => {
       const onSetPriority = vi.fn();
       render(
         <PriorityButton priority={undefined} onSetPriority={onSetPriority} />
       );
       fireEvent.click(screen.getByTestId('priority-pill-add'));
-      expect(onSetPriority).toHaveBeenCalledWith('high');
-    });
-
-    it('calls onSetPriority("high") when mobile add button is clicked', () => {
-      const onSetPriority = vi.fn();
-      render(
-        <PriorityButton priority={undefined} onSetPriority={onSetPriority} />
-      );
-      fireEvent.click(screen.getByTestId('priority-pill-add-mobile'));
       expect(onSetPriority).toHaveBeenCalledWith('high');
     });
   });

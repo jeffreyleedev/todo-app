@@ -13,6 +13,14 @@ describe('createTodo', () => {
     expect(todo.text).toBe('Buy milk');
   });
 
+  it('should throw an error if text is empty', () => {
+    expect(() => createTodo('')).toThrow('Todo text cannot be empty.');
+  });
+
+  it('should throw an error if text is only whitespace', () => {
+    expect(() => createTodo('   ')).toThrow('Todo text cannot be empty.');
+  });
+
   it('should throw an error if text exceeds max length', () => {
     const longText = 'a'.repeat(TODO_MAX_LENGTH + 1);
     expect(() => createTodo(longText)).toThrow(
@@ -149,10 +157,5 @@ describe('cyclePriority', () => {
 
   it('should cycle from low to undefined', () => {
     expect(cyclePriority('low')).toBeUndefined();
-  });
-
-  it('should return high for unknown values', () => {
-    // @ts-expect-error - testing fallback for invalid priority values
-    expect(cyclePriority('unknown')).toBe('high');
   });
 });

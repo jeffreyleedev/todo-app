@@ -2,6 +2,7 @@ import { cn } from '@/presentation/shared/utils/cn';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'error' | 'tertiary';
+  /** Has no effect when variant is 'tertiary' — tertiary carries fixed sizing in its variant class. */
   size?: 'sm' | 'md' | 'lg';
 }
 
