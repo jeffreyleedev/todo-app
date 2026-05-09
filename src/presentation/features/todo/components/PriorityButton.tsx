@@ -29,7 +29,7 @@ export function PriorityButton({
         className={cn(
           PRIORITY_BASE,
           priorityColors[priority],
-          'transition-opacity hover:opacity-80'
+          'shrink-0 transition-opacity hover:opacity-80'
         )}
       >
         {priority}
@@ -42,7 +42,7 @@ export function PriorityButton({
       type="button"
       onClick={() => onSetPriority('high')}
       data-testid="priority-pill-add"
-      className="flex items-center justify-center w-[24px] h-[24px] rounded-half bg-slate text-text-secondary hover:text-mint transition-colors md:w-auto md:h-auto md:rounded-20 md:font-kicker md:px-10 md:py-4 md:opacity-0 md:group-hover:opacity-100"
+      className="shrink-0 flex items-center justify-center w-[24px] h-[24px] rounded-half bg-slate text-text-secondary hover:text-mint transition-colors md:w-auto md:h-auto md:rounded-20 md:font-kicker md:px-10 md:py-4 md:opacity-0 md:group-hover:opacity-100"
     >
       <Icon name="add" className="text-[16px] md:hidden" />
       <span className="hidden md:inline">+PRIORITY</span>

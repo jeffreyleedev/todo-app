@@ -109,7 +109,7 @@ export function TodoItem({ todo }: TodoItemProps) {
               data-testid="todo-text"
               onDoubleClick={startEdit}
               className={cn(
-                'font-body flex-1 py-5 px-4 border border-transparent transition-colors duration-150 break-all',
+                'font-body flex-1 min-w-0 py-5 px-4 border border-transparent transition-colors duration-150 break-words',
                 !todo.completed &&
                   'cursor-text group-hover:text-deep-link-blue',
                 todo.completed && 'line-through text-text-secondary opacity-60'
