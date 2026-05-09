@@ -31,7 +31,7 @@ export function IconButton({
   return (
     <button
       className={cn(
-        'w-[32px] h-[32px] flex items-center justify-center transition-all duration-180',
+        'w-[32px] h-[32px] shrink-0 flex items-center justify-center transition-all duration-180',
         variants[variant],
         shapes[shape],
         className
