@@ -3,10 +3,12 @@ import { cyclePriority } from '@/domain';
 import { Icon } from '@/presentation/shared/components/Icon';
 import { cn } from '@/presentation/shared/utils/cn';
 
+const PRIORITY_BASE = 'font-kicker px-10 py-4 rounded-20';
+
 const priorityColors: Record<Priority, string> = {
-  high: 'bg-ultraviolet text-white font-kicker px-10 py-4 rounded-20',
-  medium: 'bg-accent-yellow text-black font-kicker px-10 py-4 rounded-20',
-  low: 'bg-mint text-black font-kicker px-10 py-4 rounded-20',
+  high: 'bg-ultraviolet text-white',
+  medium: 'bg-accent-yellow text-black',
+  low: 'bg-mint text-black',
 };
 
 interface PriorityButtonProps {
@@ -25,6 +27,7 @@ export function PriorityButton({
         data-testid="priority-pill"
         onClick={() => onSetPriority(cyclePriority(priority))}
         className={cn(
+          PRIORITY_BASE,
           priorityColors[priority],
           'transition-opacity hover:opacity-80'
         )}
@@ -35,23 +38,14 @@ export function PriorityButton({
   }
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => onSetPriority('high')}
-        data-testid="priority-pill-add"
-        className="font-kicker px-10 py-4 rounded-20 bg-slate text-text-secondary hover:text-mint hidden md:inline-flex md:opacity-0 md:group-hover:opacity-100 transition-opacity"
-      >
-        +PRIORITY
-      </button>
-      <button
-        type="button"
-        onClick={() => onSetPriority('high')}
-        className="md:hidden w-[24px] h-[24px] flex items-center justify-center rounded-half text-text-secondary hover:text-mint transition-colors"
-        data-testid="priority-pill-add-mobile"
-      >
-        <Icon name="add" className="text-[16px]" />
-      </button>
-    </>
+    <button
+      type="button"
+      onClick={() => onSetPriority('high')}
+      data-testid="priority-pill-add"
+      className="flex items-center justify-center w-[24px] h-[24px] rounded-half bg-slate text-text-secondary hover:text-mint transition-colors md:w-auto md:h-auto md:rounded-20 md:font-kicker md:px-10 md:py-4 md:opacity-0 md:group-hover:opacity-100"
+    >
+      <Icon name="add" className="text-[16px] md:hidden" />
+      <span className="hidden md:inline">+PRIORITY</span>
+    </button>
   );
 }

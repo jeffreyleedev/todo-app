@@ -73,9 +73,6 @@ export class TodoPage {
   priorityPillAdd = (todoText: string): Locator =>
     this.todoItem(todoText).getByTestId('priority-pill-add');
 
-  priorityPillAddMobile = (todoText: string): Locator =>
-    this.todoItem(todoText).getByTestId('priority-pill-add-mobile');
-
   /* Actions */
 
   goto = async (): Promise<void> => {
@@ -152,11 +149,7 @@ export class TodoPage {
 
   addPriorityToItem = async (todoText: string): Promise<void> => {
     await this.todoItem(todoText).hover();
-    if (await this.priorityPillAdd(todoText).isVisible()) {
-      await this.priorityPillAdd(todoText).click();
-    } else {
-      await this.priorityPillAddMobile(todoText).click();
-    }
+    await this.priorityPillAdd(todoText).click();
   };
 
   /* Edit Actions */
