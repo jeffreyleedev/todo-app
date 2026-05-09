@@ -1,4 +1,3 @@
-import { useState, useRef, useEffect } from 'react';
 import type { Todo } from '@/domain';
 import { useTodoStore } from '@/application';
 import { IconButton } from '@/presentation/shared/components/IconButton';
@@ -6,69 +5,35 @@ import { Icon } from '@/presentation/shared/components/Icon';
 import { cn } from '@/presentation/shared/utils/cn';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { TODO_MAX_LENGTH, isDuplicateTodo } from '@/domain';
 import { useShallow } from 'zustand/shallow';
-import { useCharacterCount } from '@/presentation/shared/hooks/useCharacterCount';
 import { PriorityButton } from './PriorityButton';
+import { TodoEditInput } from './TodoEditInput';
+import { useTodoEdit } from '../hooks/useTodoEdit';
 
 interface TodoItemProps {
   todo: Todo;
 }
 
 export function TodoItem({ todo }: TodoItemProps) {
-  const { toggleTodo, deleteTodo, setPriority, updateTodoText, todos } =
-    useTodoStore(
-      useShallow((state) => ({
-        toggleTodo: state.toggleTodo,
-        deleteTodo: state.deleteTodo,
-        setPriority: state.setPriority,
-        updateTodoText: state.updateTodoText,
-        todos: state.todos,
-      }))
-    );
+  const { toggleTodo, deleteTodo, setPriority, updateTodoText } = useTodoStore(
+    useShallow((state) => ({
+      toggleTodo: state.toggleTodo,
+      deleteTodo: state.deleteTodo,
+      setPriority: state.setPriority,
+      updateTodoText: state.updateTodoText,
+    }))
+  );
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [editText, setEditText] = useState('');
-  const editInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isEditing && editInputRef.current) {
-      editInputRef.current.focus();
-      editInputRef.current.select();
-    }
-  }, [isEditing]);
-
-  const handleDoubleClick = () => {
-    if (todo.completed) return;
-    setEditText(todo.text);
-    setIsEditing(true);
-  };
-
-  const saveEdit = () => {
-    const trimmed = editText.trim();
-    if (
-      trimmed &&
-      trimmed.length <= TODO_MAX_LENGTH &&
-      !isDuplicateTodo(trimmed, todos, todo.id)
-    ) {
-      updateTodoText(todo.id, trimmed);
-      setIsEditing(false);
-    }
-  };
-
-  const cancelEdit = () => {
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      saveEdit();
-    } else if (e.key === 'Escape') {
-      cancelEdit();
-    }
-  };
-
-  const { isNearLimit, isAtLimit } = useCharacterCount(editText);
+  const {
+    isEditing,
+    editText,
+    setEditText,
+    editError,
+    editInputRef,
+    startEdit,
+    saveEdit,
+    handleKeyDown,
+  } = useTodoEdit(todo, updateTodoText);
 
   const {
     attributes,
@@ -131,33 +96,18 @@ export function TodoItem({ todo }: TodoItemProps) {
             />
           </label>
           {isEditing ? (
-            <div className="flex-1 relative">
-              <input
-                ref={editInputRef}
-                type="text"
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onBlur={saveEdit}
-                maxLength={TODO_MAX_LENGTH}
-                data-testid="todo-edit-input"
-                className="w-full bg-canvas py-5 pl-4 pr-[80px] rounded-2 border border-mint focus-visible:ring-1 focus-visible:ring-ultraviolet/50 font-body text-text-primary outline-none"
-              />
-              <div
-                data-testid="todo-edit-char-counter"
-                className={cn(
-                  'absolute right-4 top-1/2 -translate-y-1/2 font-caption pointer-events-none bg-canvas pl-2 text-text-secondary',
-                  isNearLimit && 'text-accent-yellow',
-                  isAtLimit && 'text-ultraviolet'
-                )}
-              >
-                {editText.length} / {TODO_MAX_LENGTH}
-              </div>
-            </div>
+            <TodoEditInput
+              editText={editText}
+              editInputRef={editInputRef}
+              onChange={setEditText}
+              onKeyDown={handleKeyDown}
+              onBlur={saveEdit}
+              errorMessage={editError}
+            />
           ) : (
             <span
               data-testid="todo-text"
-              onDoubleClick={handleDoubleClick}
+              onDoubleClick={startEdit}
               className={cn(
                 'font-body flex-1 py-5 px-4 border border-transparent transition-colors duration-150 break-all',
                 !todo.completed &&

@@ -1,10 +1,15 @@
 import { useTodoStore } from '@/application';
+import { useShallow } from 'zustand/shallow';
 import { cn } from '@/presentation/shared/utils/cn';
 import type { Filter } from '@/domain';
 
 export function TodoFilter() {
-  const filter = useTodoStore((state) => state.filter);
-  const setFilter = useTodoStore((state) => state.setFilter);
+  const { filter, setFilter } = useTodoStore(
+    useShallow((state) => ({
+      filter: state.filter,
+      setFilter: state.setFilter,
+    }))
+  );
 
   const filters: { label: string; value: Filter }[] = [
     { label: 'ALL', value: 'all' },

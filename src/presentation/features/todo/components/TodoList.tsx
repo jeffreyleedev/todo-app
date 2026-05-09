@@ -1,20 +1,48 @@
+import { useCallback } from 'react';
 import { useTodoStore } from '@/application';
 import { TodoItem } from './TodoItem';
 import { Icon } from '@/presentation/shared/components/Icon';
 import { useShallow } from 'zustand/shallow';
-import { filterTodos } from '@/domain';
+import { filterTodos, type Todo } from '@/domain';
 import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core';
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-export function TodoList() {
-  const filteredTodos = useTodoStore(
-    useShallow((state) => filterTodos(state.todos, state.filter))
+function SortableSection({ todos }: { todos: Todo[] }) {
+  return (
+    <SortableContext
+      items={todos.map((t) => t.id)}
+      strategy={verticalListSortingStrategy}
+    >
+      {todos.map((todo) => (
+        <TodoItem key={todo.id} todo={todo} />
+      ))}
+    </SortableContext>
   );
-  const totalTodos = useTodoStore((state) => state.todos.length);
-  const reorderTodos = useTodoStore((state) => state.reorderTodos);
+}
+
+export function TodoList() {
+  const { todos, filter, reorderTodos } = useTodoStore(
+    useShallow((state) => ({
+      todos: state.todos,
+      filter: state.filter,
+      reorderTodos: state.reorderTodos,
+    }))
+  );
+  const filteredTodos = filterTodos(todos, filter);
+  const totalTodos = todos.length;
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (over && active.id !== over.id) {
+        reorderTodos(active.id as string, over.id as string);
+      }
+    },
+    [reorderTodos]
+  );
 
   if (filteredTodos.length === 0) {
     return (
@@ -36,15 +64,17 @@ export function TodoList() {
     );
   }
 
-  const activeTodos = filteredTodos.filter((t) => !t.completed);
-  const completedTodos = filteredTodos.filter((t) => t.completed);
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      reorderTodos(active.id as string, over.id as string);
-    }
-  };
+  const { activeTodos, completedTodos } = filteredTodos.reduce<{
+    activeTodos: Todo[];
+    completedTodos: Todo[];
+  }>(
+    (acc, t) => {
+      if (t.completed) acc.completedTodos.push(t);
+      else acc.activeTodos.push(t);
+      return acc;
+    },
+    { activeTodos: [], completedTodos: [] }
+  );
 
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -52,14 +82,7 @@ export function TodoList() {
         <div className="absolute left-[8px] top-0 bottom-0 w-px border-l border-dashed border-purple-rule" />
 
         <div className="flex flex-col gap-16">
-          <SortableContext
-            items={activeTodos.map((t) => t.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            {activeTodos.map((todo) => (
-              <TodoItem key={todo.id} todo={todo} />
-            ))}
-          </SortableContext>
+          <SortableSection todos={activeTodos} />
 
           {completedTodos.length > 0 && (
             <>
@@ -67,14 +90,7 @@ export function TodoList() {
                 data-testid="todo-separator"
                 className="w-full h-px bg-mint-border/30 ml-32"
               />
-              <SortableContext
-                items={completedTodos.map((t) => t.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {completedTodos.map((todo) => (
-                  <TodoItem key={todo.id} todo={todo} />
-                ))}
-              </SortableContext>
+              <SortableSection todos={completedTodos} />
             </>
           )}
         </div>
