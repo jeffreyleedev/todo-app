@@ -54,24 +54,21 @@ export function TodoItem({ todo }: TodoItemProps) {
       ref={setNodeRef}
       style={style}
       data-testid="todo-item"
-      className={cn(
-        'flex items-start pl-20 relative',
-        isDragging && 'opacity-50 z-50'
-      )}
+      className={cn('pl-20 w-full relative', isDragging && 'opacity-50 z-50')}
     >
       <div className="absolute left-[8px] top-1/2 w-[4px] h-[4px] rounded-half bg-mint -translate-x-1/2 -translate-y-1/2" />
 
       <div
         className={cn(
-          'flex-1 flex items-center justify-between p-24 rounded-20 border transition-colors duration-150 group',
+          'w-full flex items-start justify-between gap-12 px-16 py-24 sm:px-24 rounded-20 border overflow-hidden transition-colors duration-150 group',
           todo.completed
             ? 'bg-slate border-mint-border'
             : 'bg-canvas border-text-primary'
         )}
       >
-        <div className="flex items-center gap-12 w-full mr-12 relative">
+        <div className="flex items-start gap-12 flex-1 min-w-0 relative">
           <div
-            className="shrink-0 cursor-grab active:cursor-grabbing flex items-center"
+            className="shrink-0 mt-5 cursor-grab active:cursor-grabbing flex items-center"
             {...attributes}
             {...listeners}
             data-testid="drag-handle"
@@ -81,7 +78,7 @@ export function TodoItem({ todo }: TodoItemProps) {
               className="text-[20px] text-text-secondary hover:text-mint transition-colors"
             />
           </div>
-          <label className="relative flex items-center justify-center w-[20px] h-[20px] shrink-0 cursor-pointer">
+          <label className="relative flex items-center justify-center w-[20px] h-[20px] shrink-0 mt-5 cursor-pointer">
             <input
               type="checkbox"
               data-testid="todo-checkbox"
@@ -119,7 +116,7 @@ export function TodoItem({ todo }: TodoItemProps) {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-12 shrink-0">
+        <div className="flex items-start gap-12 shrink-0 mt-5">
           {!todo.completed && !isEditing && (
             <PriorityButton
               priority={todo.priority}
