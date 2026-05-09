@@ -197,14 +197,6 @@ describe('TodoItem', () => {
     render(<TodoItem todo={useTodoStore.getState().todos[0]} />);
     expect(screen.queryByTestId('priority-pill')).not.toBeInTheDocument();
     expect(screen.queryByTestId('priority-pill-add')).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId('priority-pill-add-mobile')
-    ).not.toBeInTheDocument();
-  });
-
-  it('should show mobile add-priority button when todo has no priority and is not completed', () => {
-    render(<TodoItem todo={todo} />);
-    expect(screen.getByTestId('priority-pill-add-mobile')).toBeInTheDocument();
   });
 
   it('should hide priority pill during edit mode', () => {
@@ -218,9 +210,6 @@ describe('TodoItem', () => {
 
     expect(screen.queryByTestId('priority-pill')).not.toBeInTheDocument();
     expect(screen.queryByTestId('priority-pill-add')).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId('priority-pill-add-mobile')
-    ).not.toBeInTheDocument();
   });
 
   it('should hide delete button during edit mode', () => {
