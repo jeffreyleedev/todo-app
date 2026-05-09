@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Button } from './Button';
 import { IconButton } from './IconButton';
 
@@ -17,6 +17,8 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onCancel();
@@ -25,12 +27,40 @@ export function ConfirmDialog({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onCancel]);
 
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const focusable = dialog.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+    const trapTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    dialog.addEventListener('keydown', trapTab);
+    return () => dialog.removeEventListener('keydown', trapTab);
+  }, []);
+
   return (
     <div
       data-testid="confirm-dialog-overlay"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/[0.33] px-12"
     >
       <div
+        ref={dialogRef}
         data-testid="confirm-dialog"
         role="dialog"
         aria-modal="true"

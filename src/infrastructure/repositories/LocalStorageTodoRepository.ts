@@ -1,6 +1,6 @@
 import type { Todo, TodoRepository } from '@/domain';
 
-const STORAGE_KEY = 'todos_v2'; // New key for the new schema (string IDs, createdAt)
+const STORAGE_KEY = 'todos_v2'; // versioned to avoid collisions with pre-1.0 schema
 
 export class LocalStorageTodoRepository implements TodoRepository {
   load(): Todo[] {
