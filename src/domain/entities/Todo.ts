@@ -11,6 +11,7 @@ export interface Todo {
 }
 
 export function validateTodoText(text: string): void {
+  if (!text.trim()) throw new Error('Todo text cannot be empty.');
   if (text.length > TODO_MAX_LENGTH) {
     throw new Error(`Todo text cannot exceed ${TODO_MAX_LENGTH} characters.`);
   }
@@ -38,7 +39,7 @@ export function cyclePriority(
     undefined,
   ];
   const idx = order.indexOf(current);
-  return idx === -1 ? 'high' : order[idx + 1];
+  return order[idx + 1];
 }
 
 export function toggleTodo(todo: Todo): Todo {

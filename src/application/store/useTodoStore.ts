@@ -5,9 +5,8 @@ import {
   type Priority,
   createTodo,
   toggleTodo,
-  filterTodos,
-  countActive,
   validateTodoText,
+  isDuplicateTodo,
 } from '@/domain';
 import { LocalStorageTodoRepository } from '@/infrastructure';
 
@@ -18,99 +17,87 @@ interface TodoState {
   filter: Filter;
 
   // Actions
-  addTodo: (text: string) => void;
+  addTodo: (text: string) => boolean;
   toggleTodo: (id: string) => void;
   deleteTodo: (id: string) => void;
   setPriority: (id: string, priority?: Priority) => void;
-  updateTodoText: (id: string, text: string) => void;
+  updateTodoText: (id: string, text: string) => boolean;
   clearCompleted: () => void;
   deleteAll: () => void;
   setFilter: (filter: Filter) => void;
   reorderTodos: (activeId: string, overId: string) => void;
-
-  // Selectors (derived state)
-  getFilteredTodos: () => Todo[];
-  getActiveCount: () => number;
 }
 
-export const useTodoStore = create<TodoState>((set, get) => ({
-  todos: repository.load(),
-  filter: 'all',
-
-  addTodo: (text: string) => {
-    const newTodo = createTodo(text);
-    const newTodos = [...get().todos, newTodo];
+export const useTodoStore = create<TodoState>((set, get) => {
+  const saveTodos = (newTodos: Todo[]) => {
     set({ todos: newTodos });
     repository.save(newTodos);
-  },
+  };
 
-  toggleTodo: (id: string) => {
-    const todos = get().todos;
-    if (!todos.some((t) => t.id === id)) return;
-    const newTodos = todos.map((t) => (t.id === id ? toggleTodo(t) : t));
-    set({ todos: newTodos });
-    repository.save(newTodos);
-  },
+  return {
+    todos: repository.load(),
+    filter: 'all',
 
-  deleteTodo: (id: string) => {
-    const todos = get().todos;
-    if (!todos.some((t) => t.id === id)) return;
-    const newTodos = todos.filter((t) => t.id !== id);
-    set({ todos: newTodos });
-    repository.save(newTodos);
-  },
+    addTodo: (text: string) => {
+      try {
+        validateTodoText(text);
+      } catch {
+        return false;
+      }
+      const todos = get().todos;
+      if (isDuplicateTodo(text, todos)) return false;
+      saveTodos([...todos, createTodo(text)]);
+      return true;
+    },
 
-  setPriority: (id: string, priority?: Priority) => {
-    const newTodos = get().todos.map((t) =>
-      t.id === id ? { ...t, priority } : t
-    );
-    set({ todos: newTodos });
-    repository.save(newTodos);
-  },
+    toggleTodo: (id: string) => {
+      saveTodos(get().todos.map((t) => (t.id === id ? toggleTodo(t) : t)));
+    },
 
-  updateTodoText: (id: string, text: string) => {
-    validateTodoText(text);
-    const newTodos = get().todos.map((t) => (t.id === id ? { ...t, text } : t));
-    set({ todos: newTodos });
-    repository.save(newTodos);
-  },
+    deleteTodo: (id: string) => {
+      saveTodos(get().todos.filter((t) => t.id !== id));
+    },
 
-  clearCompleted: () => {
-    const newTodos = get().todos.filter((t) => !t.completed);
-    set({ todos: newTodos });
-    repository.save(newTodos);
-  },
+    setPriority: (id: string, priority?: Priority) => {
+      saveTodos(get().todos.map((t) => (t.id === id ? { ...t, priority } : t)));
+    },
 
-  deleteAll: () => {
-    set({ todos: [] });
-    repository.save([]);
-  },
+    updateTodoText: (id: string, text: string) => {
+      try {
+        validateTodoText(text);
+      } catch {
+        return false;
+      }
+      const todos = get().todos;
+      if (isDuplicateTodo(text, todos, id)) return false;
+      saveTodos(todos.map((t) => (t.id === id ? { ...t, text } : t)));
+      return true;
+    },
 
-  setFilter: (filter: Filter) => {
-    set({ filter });
-  },
+    clearCompleted: () => {
+      saveTodos(get().todos.filter((t) => !t.completed));
+    },
 
-  reorderTodos: (activeId: string, overId: string) => {
-    const { todos } = get();
-    if (activeId === overId) return;
+    deleteAll: () => {
+      saveTodos([]);
+    },
 
-    const oldIndex = todos.findIndex((t) => t.id === activeId);
-    const newIndex = todos.findIndex((t) => t.id === overId);
-    if (oldIndex === -1 || newIndex === -1) return;
+    setFilter: (filter: Filter) => {
+      set({ filter });
+    },
 
-    const newTodos = [...todos];
-    const [moved] = newTodos.splice(oldIndex, 1);
-    newTodos.splice(newIndex, 0, moved);
-    set({ todos: newTodos });
-    repository.save(newTodos);
-  },
+    reorderTodos: (activeId: string, overId: string) => {
+      const { todos } = get();
+      if (activeId === overId) return;
 
-  getFilteredTodos: () => {
-    const { todos, filter } = get();
-    return filterTodos(todos, filter);
-  },
+      const oldIndex = todos.findIndex((t) => t.id === activeId);
+      const newIndex = todos.findIndex((t) => t.id === overId);
+      if (oldIndex === -1 || newIndex === -1) return;
 
-  getActiveCount: () => {
-    return countActive(get().todos);
-  },
-}));
+      const newTodos = [...todos];
+      const [moved] = newTodos.splice(oldIndex, 1);
+      newTodos.splice(newIndex, 0, moved);
+      saveTodos(newTodos);
+    },
+  };
+});

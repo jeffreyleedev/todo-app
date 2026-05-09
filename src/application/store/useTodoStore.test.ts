@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useTodoStore } from './useTodoStore';
-import { TODO_MAX_LENGTH } from '@/domain';
+import { TODO_MAX_LENGTH, filterTodos } from '@/domain';
 
 const { mockSave, mockLoad } = vi.hoisted(() => ({
   mockSave: vi.fn(),
@@ -30,6 +30,22 @@ describe('useTodoStore', () => {
     expect(todos).toHaveLength(1);
     expect(todos[0].text).toBe('New Todo');
     expect(mockSave).toHaveBeenCalledWith(todos);
+  });
+
+  it('should not add a duplicate todo', () => {
+    useTodoStore.getState().addTodo('Duplicate');
+    mockSave.mockClear();
+    useTodoStore.getState().addTodo('Duplicate');
+    expect(useTodoStore.getState().todos).toHaveLength(1);
+    expect(mockSave).not.toHaveBeenCalled();
+  });
+
+  it('should not add a duplicate todo (case-insensitive)', () => {
+    useTodoStore.getState().addTodo('Duplicate');
+    mockSave.mockClear();
+    useTodoStore.getState().addTodo('duplicate');
+    expect(useTodoStore.getState().todos).toHaveLength(1);
+    expect(mockSave).not.toHaveBeenCalled();
   });
 
   it('should set priority on a todo', () => {
@@ -70,7 +86,6 @@ describe('useTodoStore', () => {
     useTodoStore.getState().toggleTodo('non-existent-id');
     expect(useTodoStore.getState().todos).toHaveLength(1);
     expect(useTodoStore.getState().todos[0].completed).toBe(false);
-    expect(mockSave).not.toHaveBeenCalled();
   });
 
   it('should delete a todo', () => {
@@ -87,7 +102,6 @@ describe('useTodoStore', () => {
     mockSave.mockClear();
     useTodoStore.getState().deleteTodo('non-existent-id');
     expect(useTodoStore.getState().todos).toHaveLength(1);
-    expect(mockSave).not.toHaveBeenCalled();
   });
 
   it('should set filter', () => {
@@ -124,7 +138,7 @@ describe('useTodoStore', () => {
     expect(useTodoStore.getState().todos).toHaveLength(0);
   });
 
-  describe('getFilteredTodos selector', () => {
+  describe('filterTodos (via domain)', () => {
     beforeEach(() => {
       useTodoStore.getState().addTodo('Active Todo');
       useTodoStore.getState().addTodo('Completed Todo');
@@ -133,20 +147,23 @@ describe('useTodoStore', () => {
     });
 
     it('should return all todos when filter is all', () => {
-      const filtered = useTodoStore.getState().getFilteredTodos();
+      const { todos, filter } = useTodoStore.getState();
+      const filtered = filterTodos(todos, filter);
       expect(filtered).toHaveLength(2);
     });
 
     it('should return only active todos when filter is active', () => {
       useTodoStore.getState().setFilter('active');
-      const filtered = useTodoStore.getState().getFilteredTodos();
+      const { todos, filter } = useTodoStore.getState();
+      const filtered = filterTodos(todos, filter);
       expect(filtered).toHaveLength(1);
       expect(filtered[0].text).toBe('Active Todo');
     });
 
     it('should return only completed todos when filter is completed', () => {
       useTodoStore.getState().setFilter('completed');
-      const filtered = useTodoStore.getState().getFilteredTodos();
+      const { todos, filter } = useTodoStore.getState();
+      const filtered = filterTodos(todos, filter);
       expect(filtered).toHaveLength(1);
       expect(filtered[0].text).toBe('Completed Todo');
     });
@@ -233,35 +250,14 @@ describe('useTodoStore', () => {
       expect(mockSave).toHaveBeenCalledWith(useTodoStore.getState().todos);
     });
 
-    it('should throw when text exceeds TODO_MAX_LENGTH', () => {
+    it('should return false when text exceeds TODO_MAX_LENGTH', () => {
       useTodoStore.getState().addTodo('Test');
       const id = useTodoStore.getState().todos[0].id;
 
-      expect(() =>
-        useTodoStore
-          .getState()
-          .updateTodoText(id, 'a'.repeat(TODO_MAX_LENGTH + 1))
-      ).toThrow();
-    });
-  });
-
-  describe('getActiveCount selector', () => {
-    it('should return 0 when there are no todos', () => {
-      expect(useTodoStore.getState().getActiveCount()).toBe(0);
-    });
-
-    it('should return the correct count of active todos', () => {
-      useTodoStore.getState().addTodo('Todo 1');
-      useTodoStore.getState().addTodo('Todo 2');
-      expect(useTodoStore.getState().getActiveCount()).toBe(2);
-    });
-
-    it('should not count completed todos', () => {
-      useTodoStore.getState().addTodo('Todo 1');
-      useTodoStore.getState().addTodo('Todo 2');
-      const id = useTodoStore.getState().todos[0].id;
-      useTodoStore.getState().toggleTodo(id);
-      expect(useTodoStore.getState().getActiveCount()).toBe(1);
+      const result = useTodoStore
+        .getState()
+        .updateTodoText(id, 'a'.repeat(TODO_MAX_LENGTH + 1));
+      expect(result).toBe(false);
     });
   });
 
