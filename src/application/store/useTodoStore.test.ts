@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useTodoStore } from './useTodoStore';
 import { TODO_MAX_LENGTH, filterTodos } from '@/domain';
+import { createMockTodo } from '@/test-utils/storeMocks';
 
 const { mockSave, mockLoad } = vi.hoisted(() => ({
   mockSave: vi.fn(),
@@ -264,12 +265,7 @@ describe('useTodoStore', () => {
   describe('initial hydration', () => {
     it('should use initialState with non-empty todos when set manually', () => {
       const mockTodos = [
-        {
-          id: 'hydrated-1',
-          text: 'Persisted todo',
-          completed: false,
-          createdAt: Date.now(),
-        },
+        createMockTodo({ id: 'hydrated-1', text: 'Persisted todo' }),
       ];
       useTodoStore.setState({ todos: mockTodos });
 

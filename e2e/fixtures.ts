@@ -5,23 +5,20 @@ export const test = base.extend<{
   todoPage: TodoPage;
 }>({
   todoPage: async ({ page }, use) => {
+    const clearStorageSafely = () =>
+      page.evaluate(() => {
+        try {
+          localStorage.clear();
+        } catch {
+          /* noop: localStorage may not be available */
+        }
+      });
+
     const todoPage = new TodoPage(page);
     await todoPage.goto();
-    await page.evaluate(() => {
-      try {
-        localStorage.clear();
-      } catch {
-        /* noop: localStorage may not be available */
-      }
-    });
+    await clearStorageSafely();
     await use(todoPage);
-    await page.evaluate(() => {
-      try {
-        localStorage.clear();
-      } catch {
-        /* noop: localStorage may not be available */
-      }
-    });
+    await clearStorageSafely();
   },
 });
 

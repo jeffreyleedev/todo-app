@@ -3,10 +3,11 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { AddTodo } from './AddTodo';
 import { useTodoStore } from '@/application';
 import { TODO_MAX_LENGTH } from '@/domain';
+import { resetTodoStore, createMockTodo } from '@/test-utils/storeMocks';
 
 describe('AddTodo', () => {
   beforeEach(() => {
-    useTodoStore.setState({ todos: [] });
+    resetTodoStore();
   });
 
   it('should render the input, submit button, and character counter', () => {
@@ -175,9 +176,7 @@ describe('AddTodo', () => {
 
   it('should not add todo and disable button when text is a duplicate of active todo', () => {
     useTodoStore.setState({
-      todos: [
-        { id: '1', text: 'Buy milk', completed: false, createdAt: Date.now() },
-      ],
+      todos: [createMockTodo({ text: 'Buy milk' })],
     });
     render(<AddTodo />);
     const input = screen.getByPlaceholderText(
@@ -195,9 +194,7 @@ describe('AddTodo', () => {
 
   it('should disable button for case-insensitive duplicate', () => {
     useTodoStore.setState({
-      todos: [
-        { id: '1', text: 'Buy milk', completed: false, createdAt: Date.now() },
-      ],
+      todos: [createMockTodo({ text: 'Buy milk' })],
     });
     render(<AddTodo />);
     const input = screen.getByPlaceholderText(
@@ -212,9 +209,7 @@ describe('AddTodo', () => {
 
   it('should disable button for trimmed-whitespace duplicate', () => {
     useTodoStore.setState({
-      todos: [
-        { id: '1', text: 'Buy milk', completed: false, createdAt: Date.now() },
-      ],
+      todos: [createMockTodo({ text: 'Buy milk' })],
     });
     render(<AddTodo />);
     const input = screen.getByPlaceholderText(
@@ -229,9 +224,7 @@ describe('AddTodo', () => {
 
   it('should enable button when matching todo is completed', () => {
     useTodoStore.setState({
-      todos: [
-        { id: '1', text: 'Buy milk', completed: true, createdAt: Date.now() },
-      ],
+      todos: [createMockTodo({ text: 'Buy milk', completed: true })],
     });
     render(<AddTodo />);
     const input = screen.getByPlaceholderText(
@@ -246,9 +239,7 @@ describe('AddTodo', () => {
 
   it('should not add duplicate via form submit (Enter key guard)', () => {
     useTodoStore.setState({
-      todos: [
-        { id: '1', text: 'Buy milk', completed: false, createdAt: Date.now() },
-      ],
+      todos: [createMockTodo({ text: 'Buy milk' })],
     });
     render(<AddTodo />);
     const input = screen.getByPlaceholderText(

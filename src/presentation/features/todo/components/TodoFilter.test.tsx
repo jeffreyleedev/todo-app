@@ -2,10 +2,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TodoFilter } from './TodoFilter';
 import { useTodoStore } from '@/application';
+import { resetTodoStore } from '@/test-utils/storeMocks';
 
 describe('TodoFilter', () => {
   beforeEach(() => {
-    useTodoStore.setState({ filter: 'all' });
+    resetTodoStore();
   });
 
   it('should render all filter buttons', () => {

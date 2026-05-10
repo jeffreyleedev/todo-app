@@ -2,26 +2,24 @@ import { useCallback, useSyncExternalStore } from 'react';
 
 type Theme = 'dark' | 'light';
 
-function getSnapshot(): Theme {
-  return document.documentElement.classList.contains('light')
-    ? 'light'
-    : 'dark';
-}
-
-function getServerSnapshot(): Theme {
-  return 'dark';
-}
-
-function subscribe(callback: () => void): () => void {
-  const observer = new MutationObserver(callback);
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['class'],
-  });
-  return () => observer.disconnect();
-}
-
 export function useTheme() {
+  const subscribe = useCallback((callback: () => void) => {
+    const observer = new MutationObserver(callback);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const getSnapshot = useCallback((): Theme => {
+    return document.documentElement.classList.contains('light')
+      ? 'light'
+      : 'dark';
+  }, []);
+
+  const getServerSnapshot = useCallback((): Theme => 'dark', []);
+
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const toggle = useCallback(() => {

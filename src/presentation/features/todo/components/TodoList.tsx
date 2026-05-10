@@ -3,7 +3,7 @@ import { useTodoStore } from '@/application';
 import { TodoItem } from './TodoItem';
 import { Icon } from '@/presentation/shared/components/Icon';
 import { useShallow } from 'zustand/shallow';
-import { filterTodos, type Todo } from '@/domain';
+import { filterTodos, partitionTodos, type Todo } from '@/domain';
 import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -64,17 +64,7 @@ export function TodoList() {
     );
   }
 
-  const { activeTodos, completedTodos } = filteredTodos.reduce<{
-    activeTodos: Todo[];
-    completedTodos: Todo[];
-  }>(
-    (acc, t) => {
-      if (t.completed) acc.completedTodos.push(t);
-      else acc.activeTodos.push(t);
-      return acc;
-    },
-    { activeTodos: [], completedTodos: [] }
-  );
+  const { activeTodos, completedTodos } = partitionTodos(filteredTodos);
 
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

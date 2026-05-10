@@ -4,6 +4,7 @@ import { TodoItem } from './TodoItem';
 import { createTodo } from '@/domain';
 import { useTodoStore } from '@/application';
 import { useSortable } from '@dnd-kit/sortable';
+import { resetTodoStore } from '@/test-utils/storeMocks';
 
 vi.mock('@dnd-kit/sortable', () => ({
   useSortable: vi.fn().mockReturnValue({
@@ -35,6 +36,7 @@ describe('TodoItem', () => {
   const todo = createTodo('Test Todo');
 
   beforeEach(() => {
+    resetTodoStore();
     useTodoStore.setState({ todos: [todo] });
   });
 

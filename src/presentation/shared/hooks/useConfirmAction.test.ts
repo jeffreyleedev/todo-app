@@ -2,14 +2,25 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { useConfirmAction } from './useConfirmAction';
 
+type TestAction = 'clear-completed' | 'delete-all';
+
+function makeHook(clearCompleted = vi.fn(), deleteAll = vi.fn()) {
+  return renderHook(() =>
+    useConfirmAction<TestAction>({
+      'clear-completed': clearCompleted,
+      'delete-all': deleteAll,
+    })
+  );
+}
+
 describe('useConfirmAction', () => {
   it('initial state has confirmAction as null', () => {
-    const { result } = renderHook(() => useConfirmAction(vi.fn(), vi.fn()));
+    const { result } = makeHook();
     expect(result.current.confirmAction).toBeNull();
   });
 
   it('setConfirmAction updates to clear-completed', () => {
-    const { result } = renderHook(() => useConfirmAction(vi.fn(), vi.fn()));
+    const { result } = makeHook();
 
     act(() => result.current.setConfirmAction('clear-completed'));
 
@@ -17,7 +28,7 @@ describe('useConfirmAction', () => {
   });
 
   it('setConfirmAction updates to delete-all', () => {
-    const { result } = renderHook(() => useConfirmAction(vi.fn(), vi.fn()));
+    const { result } = makeHook();
 
     act(() => result.current.setConfirmAction('delete-all'));
 
@@ -27,9 +38,7 @@ describe('useConfirmAction', () => {
   it('handleConfirm when clear-completed calls clearCompleted and resets to null', () => {
     const clearCompleted = vi.fn();
     const deleteAll = vi.fn();
-    const { result } = renderHook(() =>
-      useConfirmAction(clearCompleted, deleteAll)
-    );
+    const { result } = makeHook(clearCompleted, deleteAll);
 
     act(() => result.current.setConfirmAction('clear-completed'));
     act(() => result.current.handleConfirm());
@@ -42,9 +51,7 @@ describe('useConfirmAction', () => {
   it('handleConfirm when delete-all calls deleteAll and resets to null', () => {
     const clearCompleted = vi.fn();
     const deleteAll = vi.fn();
-    const { result } = renderHook(() =>
-      useConfirmAction(clearCompleted, deleteAll)
-    );
+    const { result } = makeHook(clearCompleted, deleteAll);
 
     act(() => result.current.setConfirmAction('delete-all'));
     act(() => result.current.handleConfirm());
@@ -57,9 +64,7 @@ describe('useConfirmAction', () => {
   it('handleConfirm when confirmAction is null calls neither action', () => {
     const clearCompleted = vi.fn();
     const deleteAll = vi.fn();
-    const { result } = renderHook(() =>
-      useConfirmAction(clearCompleted, deleteAll)
-    );
+    const { result } = makeHook(clearCompleted, deleteAll);
 
     act(() => result.current.handleConfirm());
 
@@ -68,7 +73,7 @@ describe('useConfirmAction', () => {
   });
 
   it('setConfirmAction(null) after setting resets correctly', () => {
-    const { result } = renderHook(() => useConfirmAction(vi.fn(), vi.fn()));
+    const { result } = makeHook();
 
     act(() => result.current.setConfirmAction('delete-all'));
     act(() => result.current.setConfirmAction(null));

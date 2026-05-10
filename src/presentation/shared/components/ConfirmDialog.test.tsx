@@ -34,7 +34,7 @@ describe('ConfirmDialog', () => {
     expect(dialog).toHaveAttribute('aria-modal', 'true');
   });
 
-  it('should set aria-label to the title prop', () => {
+  it('should label dialog via aria-labelledby pointing to the title heading', () => {
     render(
       <ConfirmDialog
         title="Delete item?"
@@ -45,7 +45,10 @@ describe('ConfirmDialog', () => {
       />
     );
     const dialog = screen.getByRole('dialog');
-    expect(dialog).toHaveAttribute('aria-label', 'Delete item?');
+    expect(dialog).toHaveAttribute('aria-labelledby', 'confirm-dialog-title');
+    expect(
+      screen.getByRole('heading', { name: 'Delete item?' })
+    ).toHaveAttribute('id', 'confirm-dialog-title');
   });
 
   it('should render confirmLabel text in the confirm button', () => {

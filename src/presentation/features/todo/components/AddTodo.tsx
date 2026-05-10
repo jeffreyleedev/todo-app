@@ -4,6 +4,7 @@ import { TODO_MAX_LENGTH, isDuplicateTodo } from '@/domain';
 import { useShallow } from 'zustand/shallow';
 import { Button } from '@/presentation/shared/components/Button';
 import { CharCounter } from '@/presentation/shared/components/CharCounter';
+import { FOCUS_RING } from '@/presentation/shared/utils/focusRing';
 
 export function AddTodo() {
   const [text, setText] = useState('');
@@ -33,7 +34,7 @@ export function AddTodo() {
           onChange={(e) => setText(e.target.value)}
           placeholder="Add a new task..."
           maxLength={TODO_MAX_LENGTH}
-          className="flex-1 bg-canvas py-10 px-12 rounded-2 border border-text-secondary focus:border-mint focus-visible:ring-1 focus-visible:ring-ultraviolet/50 font-body text-text-primary placeholder:text-text-secondary transition-colors duration-150 outline-none"
+          className={`flex-1 bg-canvas py-10 px-12 rounded-2 border border-text-secondary focus:border-mint ${FOCUS_RING} font-body text-text-primary placeholder:text-text-secondary transition-colors duration-150 outline-none`}
         />
         <Button
           type="submit"
