@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   createTodo,
   toggleTodo,
+  validateTodoText,
   TODO_MAX_LENGTH,
   isDuplicateTodo,
   cyclePriority,
@@ -139,6 +140,18 @@ describe('isDuplicateTodo', () => {
   it('should return false when the only matching todo is the excluded one', () => {
     const todo = createTodo('Buy milk');
     expect(isDuplicateTodo('Buy milk', [todo], todo.id)).toBe(false);
+  });
+});
+
+describe('validateTodoText null/undefined boundary', () => {
+  it('should throw when passed null', () => {
+    // @ts-expect-error intentional JS/TS boundary test
+    expect(() => validateTodoText(null)).toThrow();
+  });
+
+  it('should throw when passed undefined', () => {
+    // @ts-expect-error intentional JS/TS boundary test
+    expect(() => validateTodoText(undefined)).toThrow();
   });
 });
 

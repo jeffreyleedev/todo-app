@@ -28,18 +28,19 @@ export function createTodo(text: string): Todo {
 }
 
 // Two `undefined` entries: one to enter the cycle from no priority, one to exit back to none.
+const PRIORITY_CYCLE_ORDER: (Priority | undefined)[] = [
+  undefined,
+  'high',
+  'medium',
+  'low',
+  undefined,
+];
+
 export function cyclePriority(
   current: Priority | undefined
 ): Priority | undefined {
-  const order: (Priority | undefined)[] = [
-    undefined,
-    'high',
-    'medium',
-    'low',
-    undefined,
-  ];
-  const idx = order.indexOf(current);
-  return order[idx + 1];
+  const idx = PRIORITY_CYCLE_ORDER.indexOf(current);
+  return PRIORITY_CYCLE_ORDER[idx + 1];
 }
 
 export function toggleTodo(todo: Todo): Todo {
@@ -59,6 +60,6 @@ export function isDuplicateTodo(
     (todo) =>
       !todo.completed &&
       todo.id !== excludeId &&
-      todo.text.toLowerCase() === normalized
+      todo.text.trim().toLowerCase() === normalized
   );
 }
