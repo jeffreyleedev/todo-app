@@ -7,6 +7,7 @@ import {
   toggleTodo,
   validateTodoText,
   isDuplicateTodo,
+  updateTodoById,
 } from '@/domain';
 import { LocalStorageTodoRepository } from '@/infrastructure';
 
@@ -39,29 +40,35 @@ export const useTodoStore = create<TodoState>((set, get) => {
     filter: 'all',
 
     addTodo: (text: string) => {
+      const todos = get().todos;
+      if (isDuplicateTodo(text, todos)) return false;
       try {
-        validateTodoText(text);
+        saveTodos([...todos, createTodo(text)]);
       } catch {
         return false;
       }
-      const todos = get().todos;
-      if (isDuplicateTodo(text, todos)) return false;
-      saveTodos([...todos, createTodo(text)]);
       return true;
     },
 
     toggleTodo: (id: string) => {
-      saveTodos(get().todos.map((t) => (t.id === id ? toggleTodo(t) : t)));
+      const todos = get().todos;
+      saveTodos(updateTodoById(todos, id, toggleTodo));
     },
 
     deleteTodo: (id: string) => {
-      saveTodos(get().todos.filter((t) => t.id !== id));
+      const todos = get().todos;
+      saveTodos(todos.filter((t) => t.id !== id));
     },
 
     setPriority: (id: string, priority?: Priority) => {
-      saveTodos(get().todos.map((t) => (t.id === id ? { ...t, priority } : t)));
+      const todos = get().todos;
+      saveTodos(updateTodoById(todos, id, (t) => ({ ...t, priority })));
     },
 
+    // Returns false for two distinct reasons: validation failure or duplicate.
+    // TodoEditInput enforces maxLength and saveEdit guards the empty case, so
+    // by the time this is called from useTodoEdit the only reachable false is
+    // a duplicate. If new failure modes are added, update saveEdit accordingly.
     updateTodoText: (id: string, text: string) => {
       try {
         validateTodoText(text);
@@ -70,12 +77,13 @@ export const useTodoStore = create<TodoState>((set, get) => {
       }
       const todos = get().todos;
       if (isDuplicateTodo(text, todos, id)) return false;
-      saveTodos(todos.map((t) => (t.id === id ? { ...t, text } : t)));
+      saveTodos(updateTodoById(todos, id, (t) => ({ ...t, text })));
       return true;
     },
 
     clearCompleted: () => {
-      saveTodos(get().todos.filter((t) => !t.completed));
+      const todos = get().todos;
+      saveTodos(todos.filter((t) => !t.completed));
     },
 
     deleteAll: () => {
