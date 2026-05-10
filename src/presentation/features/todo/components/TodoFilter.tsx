@@ -3,6 +3,12 @@ import { useShallow } from 'zustand/shallow';
 import { cn } from '@/presentation/shared/utils/cn';
 import type { Filter } from '@/domain';
 
+const FILTERS: { label: string; value: Filter }[] = [
+  { label: 'ALL', value: 'all' },
+  { label: 'ACTIVE', value: 'active' },
+  { label: 'COMPLETED', value: 'completed' },
+];
+
 export function TodoFilter() {
   const { filter, setFilter } = useTodoStore(
     useShallow((state) => ({
@@ -11,15 +17,9 @@ export function TodoFilter() {
     }))
   );
 
-  const filters: { label: string; value: Filter }[] = [
-    { label: 'ALL', value: 'all' },
-    { label: 'ACTIVE', value: 'active' },
-    { label: 'COMPLETED', value: 'completed' },
-  ];
-
   return (
     <div className="flex gap-8 order-1 sm:order-2">
-      {filters.map((filterOption) => (
+      {FILTERS.map((filterOption) => (
         <button
           key={filterOption.value}
           onClick={() => setFilter(filterOption.value)}

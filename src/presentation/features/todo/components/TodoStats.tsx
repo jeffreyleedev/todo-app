@@ -3,13 +3,12 @@ import { ConfirmDialog } from '@/presentation/shared/components/ConfirmDialog';
 import { Button } from '@/presentation/shared/components/Button';
 import { TodoFilter } from './TodoFilter';
 import { useShallow } from 'zustand/shallow';
-import {
-  useConfirmAction,
-  type ConfirmAction,
-} from '../hooks/useConfirmAction';
+import { useConfirmAction } from '@/presentation/shared/hooks/useConfirmAction';
+
+type TodoAction = 'clear-completed' | 'delete-all';
 
 const CONFIRM_CONFIG: Record<
-  NonNullable<ConfirmAction>,
+  TodoAction,
   { title: string; message: string; confirmLabel: string }
 > = {
   'clear-completed': {
@@ -36,10 +35,11 @@ export function TodoStats() {
     }))
   );
 
-  const { confirmAction, setConfirmAction, handleConfirm } = useConfirmAction(
-    clearCompleted,
-    deleteAll
-  );
+  const { confirmAction, setConfirmAction, handleConfirm } =
+    useConfirmAction<TodoAction>({
+      'clear-completed': clearCompleted,
+      'delete-all': deleteAll,
+    });
 
   const activeCount = todos.filter((t) => !t.completed).length;
   const completedCount = todos.length - activeCount;

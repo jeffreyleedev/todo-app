@@ -3,10 +3,11 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { TodoStats } from './TodoStats';
 import { createTodo } from '@/domain';
 import { useTodoStore } from '@/application';
+import { resetTodoStore, createMockTodo } from '@/test-utils/storeMocks';
 
 describe('TodoStats', () => {
   beforeEach(() => {
-    useTodoStore.setState({ todos: [], filter: 'all' });
+    resetTodoStore();
   });
 
   it('should render active count', () => {
@@ -34,7 +35,7 @@ describe('TodoStats', () => {
 
   it('should clear completed todos after confirmation', () => {
     const active = createTodo('Active');
-    const completed = { ...createTodo('Completed'), completed: true };
+    const completed = createMockTodo({ text: 'Completed', completed: true });
     useTodoStore.setState({ todos: [active, completed] });
 
     render(<TodoStats />);
@@ -49,7 +50,7 @@ describe('TodoStats', () => {
 
   it('should not clear completed todos when cancelled', () => {
     const active = createTodo('Active');
-    const completed = { ...createTodo('Completed'), completed: true };
+    const completed = createMockTodo({ text: 'Completed', completed: true });
     useTodoStore.setState({ todos: [active, completed], filter: 'all' });
 
     render(<TodoStats />);
@@ -62,7 +63,7 @@ describe('TodoStats', () => {
   });
 
   it('should not render Clear completed when filter is active', () => {
-    const completed = { ...createTodo('Completed'), completed: true };
+    const completed = createMockTodo({ text: 'Completed', completed: true });
     useTodoStore.setState({ todos: [completed], filter: 'active' });
 
     render(<TodoStats />);
@@ -112,7 +113,7 @@ describe('TodoStats', () => {
   });
 
   it('should not render Delete all when on All filter with only completed todos', () => {
-    const completed = { ...createTodo('Completed'), completed: true };
+    const completed = createMockTodo({ text: 'Completed', completed: true });
     useTodoStore.setState({ todos: [completed], filter: 'all' });
 
     render(<TodoStats />);
@@ -122,7 +123,7 @@ describe('TodoStats', () => {
   });
 
   it('should not render Delete all when on Active filter with empty active but completed todos exist', () => {
-    const completed = { ...createTodo('Completed'), completed: true };
+    const completed = createMockTodo({ text: 'Completed', completed: true });
     useTodoStore.setState({ todos: [completed], filter: 'active' });
 
     render(<TodoStats />);

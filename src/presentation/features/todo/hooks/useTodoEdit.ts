@@ -1,4 +1,4 @@
-import { useState, useReducer, useRef, useEffect } from 'react';
+import { useState, useReducer, useRef, useEffect, useCallback } from 'react';
 import type { Todo } from '@/domain';
 
 type EditState = { text: string; error: string | null };
@@ -39,15 +39,18 @@ export function useTodoEdit(
     }
   }, [isEditing]);
 
-  const setEditText = (value: string) => dispatch({ type: 'setText', value });
+  const setEditText = useCallback(
+    (value: string) => dispatch({ type: 'setText', value }),
+    []
+  );
 
-  const startEdit = () => {
+  const startEdit = useCallback(() => {
     if (todo.completed) return;
     dispatch({ type: 'setText', value: todo.text });
     setIsEditing(true);
-  };
+  }, [todo.completed, todo.text]);
 
-  const saveEdit = () => {
+  const saveEdit = useCallback(() => {
     const trimmed = editText.trim();
     if (!trimmed) {
       dispatch({ type: 'setError', error: 'Task text cannot be empty.' });
@@ -62,17 +65,20 @@ export function useTodoEdit(
         error: 'A task with this text already exists.',
       });
     }
-  };
+  }, [editText, todo.id, updateTodoText]);
 
-  const cancelEdit = () => {
+  const cancelEdit = useCallback(() => {
     setIsEditing(false);
     dispatch({ type: 'clearError' });
-  };
+  }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') saveEdit();
-    else if (e.key === 'Escape') cancelEdit();
-  };
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') saveEdit();
+      else if (e.key === 'Escape') cancelEdit();
+    },
+    [saveEdit, cancelEdit]
+  );
 
   return {
     isEditing,

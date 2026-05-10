@@ -1,6 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Button } from './Button';
 import { IconButton } from './IconButton';
+import { useEscapeKey } from '@/presentation/shared/hooks/useEscapeKey';
+import { useFocusTrap } from '@/presentation/shared/hooks/useFocusTrap';
 
 interface ConfirmDialogProps {
   title: string;
@@ -19,40 +21,8 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCancel();
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onCancel]);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    const focusable = dialog.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    first?.focus();
-    const trapTab = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-    dialog.addEventListener('keydown', trapTab);
-    return () => dialog.removeEventListener('keydown', trapTab);
-  }, []);
+  useEscapeKey(onCancel);
+  useFocusTrap(dialogRef);
 
   return (
     <div
@@ -64,11 +34,16 @@ export function ConfirmDialog({
         data-testid="confirm-dialog"
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-labelledby="confirm-dialog-title"
         className="bg-canvas rounded-20 border border-text-primary p-24 w-full max-w-[24rem]"
       >
         <div className="flex items-start justify-between mb-12">
-          <h2 className="font-headline-sm text-text-primary pr-24">{title}</h2>
+          <h2
+            id="confirm-dialog-title"
+            className="font-headline-sm text-text-primary pr-24"
+          >
+            {title}
+          </h2>
           <IconButton
             icon="close"
             variant="ghost"
