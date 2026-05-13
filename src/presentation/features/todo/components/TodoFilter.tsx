@@ -23,6 +23,7 @@ export function TodoFilter() {
         <button
           key={filterOption.value}
           onClick={() => setFilter(filterOption.value)}
+          aria-pressed={filter === filterOption.value}
           className={cn(
             'font-kicker px-12 py-4 rounded-20 transition-colors duration-150',
             filter === filterOption.value
