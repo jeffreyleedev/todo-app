@@ -1,20 +1,26 @@
-import { useState, useReducer, useRef, useEffect, useCallback } from 'react';
+import { useReducer, useRef, useEffect, useCallback } from 'react';
 import type { Todo } from '@/domain';
 
-type EditState = { text: string; error: string | null };
+type EditState = { isEditing: boolean; text: string; error: string | null };
 type EditAction =
+  | { type: 'start'; text: string }
   | { type: 'setText'; value: string }
   | { type: 'setError'; error: string }
-  | { type: 'clearError' };
+  | { type: 'saveSuccess' }
+  | { type: 'cancel' };
 
-function editReducer(state: EditState, action: EditAction): EditState {
+export function editReducer(state: EditState, action: EditAction): EditState {
   switch (action.type) {
+    case 'start':
+      return { isEditing: true, text: action.text, error: null };
     case 'setText':
-      return { text: action.value, error: null };
+      return { ...state, text: action.value, error: null };
     case 'setError':
       return { ...state, error: action.error };
-    case 'clearError':
-      return { ...state, error: null };
+    case 'saveSuccess':
+      return { ...state, isEditing: false, error: null };
+    case 'cancel':
+      return { ...state, isEditing: false, error: null };
   }
 }
 
@@ -22,14 +28,8 @@ export function useTodoEdit(
   todo: Todo,
   updateTodoText: (id: string, text: string) => boolean
 ) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [{ text: editText, error: editError }, dispatch] = useReducer(
-    editReducer,
-    {
-      text: '',
-      error: null,
-    }
-  );
+  const [{ isEditing, text: editText, error: editError }, dispatch] =
+    useReducer(editReducer, { isEditing: false, text: '', error: null });
   const editInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -46,8 +46,7 @@ export function useTodoEdit(
 
   const startEdit = useCallback(() => {
     if (todo.completed) return;
-    dispatch({ type: 'setText', value: todo.text });
-    setIsEditing(true);
+    dispatch({ type: 'start', text: todo.text });
   }, [todo.completed, todo.text]);
 
   const saveEdit = useCallback(() => {
@@ -57,8 +56,7 @@ export function useTodoEdit(
       return;
     }
     if (updateTodoText(todo.id, trimmed)) {
-      setIsEditing(false);
-      dispatch({ type: 'clearError' });
+      dispatch({ type: 'saveSuccess' });
     } else {
       dispatch({
         type: 'setError',
@@ -68,8 +66,7 @@ export function useTodoEdit(
   }, [editText, todo.id, updateTodoText]);
 
   const cancelEdit = useCallback(() => {
-    setIsEditing(false);
-    dispatch({ type: 'clearError' });
+    dispatch({ type: 'cancel' });
   }, []);
 
   const handleKeyDown = useCallback(
@@ -78,6 +75,13 @@ export function useTodoEdit(
       else if (e.key === 'Escape') cancelEdit();
     },
     [saveEdit, cancelEdit]
+  );
+
+  const handleTextKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === 'F2') startEdit();
+    },
+    [startEdit]
   );
 
   return {
@@ -90,5 +94,6 @@ export function useTodoEdit(
     saveEdit,
     cancelEdit,
     handleKeyDown,
+    handleTextKeyDown,
   };
 }

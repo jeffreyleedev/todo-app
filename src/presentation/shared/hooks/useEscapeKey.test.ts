@@ -39,4 +39,16 @@ describe('useEscapeKey', () => {
     expect(second).toHaveBeenCalledOnce();
     expect(first).not.toHaveBeenCalled();
   });
+
+  it('does not re-register the listener when the callback reference changes', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender } = renderHook(({ cb }) => useEscapeKey(cb), {
+      initialProps: { cb: first },
+    });
+    const addSpy = vi.spyOn(document, 'addEventListener');
+    rerender({ cb: second });
+    expect(addSpy).not.toHaveBeenCalled();
+    addSpy.mockRestore();
+  });
 });

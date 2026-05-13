@@ -33,6 +33,7 @@ export function TodoItem({ todo }: TodoItemProps) {
     startEdit,
     saveEdit,
     handleKeyDown,
+    handleTextKeyDown,
   } = useTodoEdit(todo, updateTodoText);
 
   const {
@@ -105,6 +106,8 @@ export function TodoItem({ todo }: TodoItemProps) {
             <span
               data-testid="todo-text"
               onDoubleClick={startEdit}
+              tabIndex={todo.completed ? undefined : 0}
+              onKeyDown={handleTextKeyDown}
               className={cn(
                 'font-body flex-1 min-w-0 py-5 px-4 border border-transparent transition-colors duration-150 break-words',
                 !todo.completed &&

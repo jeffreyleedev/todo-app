@@ -7,12 +7,14 @@ export function useFocusTrap(ref: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const focusable = el.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    first?.focus();
+    const initialFocusable =
+      el.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+    initialFocusable[0]?.focus();
     const trapTab = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
+      const focusable = el.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
       if (e.shiftKey) {
         if (document.activeElement === first) {
           e.preventDefault();
@@ -27,5 +29,6 @@ export function useFocusTrap(ref: RefObject<HTMLElement | null>) {
     };
     el.addEventListener('keydown', trapTab);
     return () => el.removeEventListener('keydown', trapTab);
-  }, [ref]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }

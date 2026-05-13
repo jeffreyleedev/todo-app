@@ -1,7 +1,63 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { useTodoEdit } from './useTodoEdit';
+import { editReducer, useTodoEdit } from './useTodoEdit';
 import type { Todo } from '@/domain/entities/Todo';
+
+const INITIAL_STATE = { isEditing: false, text: '', error: null };
+
+describe('editReducer', () => {
+  it('initial state: isEditing false, text empty, error null', () => {
+    expect(INITIAL_STATE).toStrictEqual({
+      isEditing: false,
+      text: '',
+      error: null,
+    });
+  });
+
+  it('start: sets isEditing true, seeds text, clears any prior error', () => {
+    const state = editReducer(
+      { ...INITIAL_STATE, error: 'prior error' },
+      { type: 'start', text: 'Buy milk' }
+    );
+    expect(state).toEqual({ isEditing: true, text: 'Buy milk', error: null });
+  });
+
+  it('setText: updates text and clears error', () => {
+    const state = editReducer(
+      { isEditing: true, text: 'old', error: 'some error' },
+      { type: 'setText', value: 'new text' }
+    );
+    expect(state).toEqual({ isEditing: true, text: 'new text', error: null });
+  });
+
+  it('setError: sets error while preserving other fields', () => {
+    const state = editReducer(
+      { isEditing: true, text: 'hello', error: null },
+      { type: 'setError', error: 'Already exists.' }
+    );
+    expect(state).toEqual({
+      isEditing: true,
+      text: 'hello',
+      error: 'Already exists.',
+    });
+  });
+
+  it('saveSuccess: clears isEditing and error, preserves text', () => {
+    const state = editReducer(
+      { isEditing: true, text: 'hello', error: 'oops' },
+      { type: 'saveSuccess' }
+    );
+    expect(state).toEqual({ isEditing: false, text: 'hello', error: null });
+  });
+
+  it('cancel: clears isEditing and error, preserves text', () => {
+    const state = editReducer(
+      { isEditing: true, text: 'hello', error: 'oops' },
+      { type: 'cancel' }
+    );
+    expect(state).toEqual({ isEditing: false, text: 'hello', error: null });
+  });
+});
 
 const makeTodo = (overrides: Partial<Todo> = {}): Todo => ({
   id: 'todo-1',
@@ -124,5 +180,40 @@ describe('useTodoEdit', () => {
 
     expect(result.current.isEditing).toBe(true);
     expect(updateTodoText).not.toHaveBeenCalled();
+  });
+
+  it('handleTextKeyDown Enter enters edit mode', () => {
+    const todo = makeTodo({ text: 'Buy milk' });
+    const { result } = renderHook(() => useTodoEdit(todo, vi.fn()));
+
+    act(() =>
+      result.current.handleTextKeyDown({ key: 'Enter' } as React.KeyboardEvent)
+    );
+
+    expect(result.current.isEditing).toBe(true);
+    expect(result.current.editText).toBe('Buy milk');
+  });
+
+  it('handleTextKeyDown F2 enters edit mode', () => {
+    const todo = makeTodo({ text: 'Buy milk' });
+    const { result } = renderHook(() => useTodoEdit(todo, vi.fn()));
+
+    act(() =>
+      result.current.handleTextKeyDown({ key: 'F2' } as React.KeyboardEvent)
+    );
+
+    expect(result.current.isEditing).toBe(true);
+    expect(result.current.editText).toBe('Buy milk');
+  });
+
+  it('handleTextKeyDown other key does not enter edit mode', () => {
+    const todo = makeTodo();
+    const { result } = renderHook(() => useTodoEdit(todo, vi.fn()));
+
+    act(() =>
+      result.current.handleTextKeyDown({ key: 'Tab' } as React.KeyboardEvent)
+    );
+
+    expect(result.current.isEditing).toBe(false);
   });
 });
