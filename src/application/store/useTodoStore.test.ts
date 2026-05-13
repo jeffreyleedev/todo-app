@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useTodoStore } from './useTodoStore';
-import { TODO_MAX_LENGTH, filterTodos } from '@/domain';
+import { TODO_MAX_LENGTH } from '@/domain';
 import { createMockTodo } from '@/test-utils/storeMocks';
 
 const { mockSave, mockLoad } = vi.hoisted(() => ({
@@ -139,37 +139,6 @@ describe('useTodoStore', () => {
     expect(useTodoStore.getState().todos).toHaveLength(0);
   });
 
-  describe('filterTodos (via domain)', () => {
-    beforeEach(() => {
-      useTodoStore.getState().addTodo('Active Todo');
-      useTodoStore.getState().addTodo('Completed Todo');
-      const id = useTodoStore.getState().todos[1].id;
-      useTodoStore.getState().toggleTodo(id);
-    });
-
-    it('should return all todos when filter is all', () => {
-      const { todos, filter } = useTodoStore.getState();
-      const filtered = filterTodos(todos, filter);
-      expect(filtered).toHaveLength(2);
-    });
-
-    it('should return only active todos when filter is active', () => {
-      useTodoStore.getState().setFilter('active');
-      const { todos, filter } = useTodoStore.getState();
-      const filtered = filterTodos(todos, filter);
-      expect(filtered).toHaveLength(1);
-      expect(filtered[0].text).toBe('Active Todo');
-    });
-
-    it('should return only completed todos when filter is completed', () => {
-      useTodoStore.getState().setFilter('completed');
-      const { todos, filter } = useTodoStore.getState();
-      const filtered = filterTodos(todos, filter);
-      expect(filtered).toHaveLength(1);
-      expect(filtered[0].text).toBe('Completed Todo');
-    });
-  });
-
   describe('reorderTodos', () => {
     it('should reorder todos when activeId and overId are different', () => {
       useTodoStore.getState().addTodo('Todo 1');
@@ -188,22 +157,26 @@ describe('useTodoStore', () => {
     it('should not change order when activeId equals overId', () => {
       useTodoStore.getState().addTodo('Todo 1');
       useTodoStore.getState().addTodo('Todo 2');
+      mockSave.mockClear();
 
       const id = useTodoStore.getState().todos[0].id;
       useTodoStore.getState().reorderTodos(id, id);
 
       const texts = useTodoStore.getState().todos.map((t) => t.text);
       expect(texts).toEqual(['Todo 1', 'Todo 2']);
+      expect(mockSave).not.toHaveBeenCalled();
     });
 
     it('should not change order when ids are not found', () => {
       useTodoStore.getState().addTodo('Todo 1');
       useTodoStore.getState().addTodo('Todo 2');
+      mockSave.mockClear();
 
       useTodoStore.getState().reorderTodos('nonexistent', 'also-nonexistent');
 
       const texts = useTodoStore.getState().todos.map((t) => t.text);
       expect(texts).toEqual(['Todo 1', 'Todo 2']);
+      expect(mockSave).not.toHaveBeenCalled();
     });
 
     it('should not change order when only one id exists', () => {

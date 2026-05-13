@@ -65,6 +65,8 @@ export class TodoPage {
   todoEditCharCounter = (): Locator =>
     this.page.getByTestId('todo-edit-char-counter');
 
+  todoEditError = (): Locator => this.page.getByRole('alert');
+
   /* Priority Locators */
 
   priorityPill = (todoText: string): Locator =>
@@ -156,6 +158,16 @@ export class TodoPage {
 
   editTodo = async (oldText: string, newText: string): Promise<void> => {
     await this.todoText(oldText).dblclick();
+    await this.todoEditInput().fill(newText);
+    await this.todoEditInput().press('Enter');
+  };
+
+  editTodoViaKeyboard = async (
+    oldText: string,
+    newText: string
+  ): Promise<void> => {
+    await this.todoText(oldText).focus();
+    await this.page.keyboard.press('Enter');
     await this.todoEditInput().fill(newText);
     await this.todoEditInput().press('Enter');
   };

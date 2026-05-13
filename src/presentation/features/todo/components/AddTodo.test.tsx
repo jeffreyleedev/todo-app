@@ -237,6 +237,36 @@ describe('AddTodo', () => {
     expect(button).toBeEnabled();
   });
 
+  it('should show "Already exists." alert when input matches an active todo', () => {
+    useTodoStore.setState({
+      todos: [createMockTodo({ text: 'Buy milk' })],
+    });
+    render(<AddTodo />);
+    const input = screen.getByPlaceholderText(
+      /Add a new task.../i
+    ) as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: 'Buy milk' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Already exists.');
+  });
+
+  it('should hide "Already exists." alert when input changes to non-duplicate', () => {
+    useTodoStore.setState({
+      todos: [createMockTodo({ text: 'Buy milk' })],
+    });
+    render(<AddTodo />);
+    const input = screen.getByPlaceholderText(
+      /Add a new task.../i
+    ) as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: 'Buy milk' } });
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: 'Buy eggs' } });
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('should not add duplicate via form submit (Enter key guard)', () => {
     useTodoStore.setState({
       todos: [createMockTodo({ text: 'Buy milk' })],

@@ -1,6 +1,7 @@
 import { TODO_MAX_LENGTH } from '@/domain';
 import { CharCounter } from '@/presentation/shared/components/CharCounter';
-import { FOCUS_RING } from '@/presentation/shared/utils/focusRing';
+import { cn } from '@/presentation/shared/utils/cn';
+import { FOCUS_RING } from '@/presentation/shared/utils/focusTokens';
 
 interface TodoEditInputProps {
   editText: string;
@@ -32,7 +33,10 @@ export function TodoEditInput({
         onBlur={onBlur}
         maxLength={max}
         data-testid="todo-edit-input"
-        className={`w-full bg-canvas py-5 pl-4 pr-[80px] rounded-2 border border-mint ${FOCUS_RING} font-body text-text-primary outline-none`}
+        className={cn(
+          'w-full bg-canvas py-5 pl-4 pr-[80px] rounded-2 border border-mint font-body text-text-primary outline-none',
+          FOCUS_RING
+        )}
       />
       <CharCounter
         length={editText.length}

@@ -40,6 +40,7 @@ export function PriorityButton({
   return (
     <button
       type="button"
+      aria-label="Set priority"
       onClick={() => onSetPriority('high')}
       data-testid="priority-pill-add"
       className="shrink-0 flex items-center justify-center w-[24px] h-[24px] rounded-half bg-slate text-text-secondary hover:text-mint transition-colors md:w-auto md:h-auto md:rounded-20 md:font-kicker md:px-10 md:py-4 md:opacity-0 md:group-hover:opacity-100"

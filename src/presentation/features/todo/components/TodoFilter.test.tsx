@@ -24,6 +24,39 @@ describe('TodoFilter', () => {
     expect(allButton).toHaveClass('bg-mint');
   });
 
+  describe('aria-pressed', () => {
+    it('should set aria-pressed="true" on the active filter and false on others', () => {
+      render(<TodoFilter />);
+      expect(screen.getByRole('button', { name: /ALL/i })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      );
+      expect(screen.getByRole('button', { name: /ACTIVE/i })).toHaveAttribute(
+        'aria-pressed',
+        'false'
+      );
+      expect(
+        screen.getByRole('button', { name: /COMPLETED/i })
+      ).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('should update aria-pressed after clicking a different filter', () => {
+      render(<TodoFilter />);
+      const activeButton = screen.getByRole('button', { name: /ACTIVE/i });
+
+      fireEvent.click(activeButton);
+
+      expect(screen.getByRole('button', { name: /ALL/i })).toHaveAttribute(
+        'aria-pressed',
+        'false'
+      );
+      expect(activeButton).toHaveAttribute('aria-pressed', 'true');
+      expect(
+        screen.getByRole('button', { name: /COMPLETED/i })
+      ).toHaveAttribute('aria-pressed', 'false');
+    });
+  });
+
   it('should update store filter when a button is clicked', () => {
     render(<TodoFilter />);
     const activeButton = screen.getByRole('button', { name: /ACTIVE/i });

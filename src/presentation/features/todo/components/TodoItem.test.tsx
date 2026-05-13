@@ -246,6 +246,15 @@ describe('TodoItem', () => {
       expect(screen.getByTestId('todo-edit-input')).toHaveValue('Test Todo');
     });
 
+    it('should enter edit mode on Enter key press on todo text', () => {
+      render(<TodoItem todo={todo} />);
+
+      fireEvent.keyDown(screen.getByTestId('todo-text'), { key: 'Enter' });
+
+      expect(screen.getByTestId('todo-edit-input')).toBeInTheDocument();
+      expect(screen.getByTestId('todo-edit-input')).toHaveValue('Test Todo');
+    });
+
     it('should save edit on Enter key', () => {
       render(<TodoItem todo={todo} />);
 

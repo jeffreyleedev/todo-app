@@ -3,7 +3,7 @@ import { useTodoStore } from '@/application';
 import { TodoItem } from './TodoItem';
 import { Icon } from '@/presentation/shared/components/Icon';
 import { useShallow } from 'zustand/shallow';
-import { filterTodos, partitionTodos, type Todo } from '@/domain';
+import { partitionFilteredTodos, type Todo } from '@/domain';
 import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -31,7 +31,7 @@ export function TodoList() {
       reorderTodos: state.reorderTodos,
     }))
   );
-  const filteredTodos = filterTodos(todos, filter);
+  const { activeTodos, completedTodos } = partitionFilteredTodos(todos, filter);
   const totalTodos = todos.length;
 
   const handleDragEnd = useCallback(
@@ -44,7 +44,7 @@ export function TodoList() {
     [reorderTodos]
   );
 
-  if (filteredTodos.length === 0) {
+  if (activeTodos.length + completedTodos.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-64 opacity-40">
         <Icon
@@ -63,8 +63,6 @@ export function TodoList() {
       </div>
     );
   }
-
-  const { activeTodos, completedTodos } = partitionTodos(filteredTodos);
 
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

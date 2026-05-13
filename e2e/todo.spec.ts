@@ -452,6 +452,16 @@ test.describe('Todo App', () => {
   });
 
   test.describe('Edit', () => {
+    test('should enter edit mode via keyboard (Enter) and save', async ({
+      todoPage,
+    }) => {
+      await todoPage.addTodo('Keyboard edit me');
+      await todoPage.editTodoViaKeyboard('Keyboard edit me', 'Keyboard saved');
+
+      await expect(todoPage.todoText('Keyboard saved')).toBeVisible();
+      await expect(todoPage.todoItem('Keyboard edit me')).toHaveCount(0);
+    });
+
     test('should edit an active todo via double-click and Enter', async ({
       todoPage,
     }) => {
@@ -509,7 +519,12 @@ test.describe('Todo App', () => {
       await input.press('Enter');
 
       await expect(input).toBeAttached();
-      await expect(input).toHaveValue('');
+      await expect(todoPage.todoEditError()).toBeVisible();
+      await expect(todoPage.todoEditError()).toHaveText(
+        'Task text cannot be empty.'
+      );
+      await input.press('Escape');
+      await expect(todoPage.todoText('Not empty')).toBeVisible();
     });
 
     test('should not save duplicate active text', async ({ todoPage }) => {
@@ -522,7 +537,12 @@ test.describe('Todo App', () => {
       await input.press('Enter');
 
       await expect(input).toBeAttached();
-      await expect(input).toHaveValue('Existing');
+      await expect(todoPage.todoEditError()).toBeVisible();
+      await expect(todoPage.todoEditError()).toHaveText(
+        'A task with this text already exists.'
+      );
+      await input.press('Escape');
+      await expect(todoPage.todoText('Edit me')).toBeVisible();
     });
 
     test('should persist edited todo on reload', async ({ page, todoPage }) => {
