@@ -1,7 +1,8 @@
 import { test, expect } from './fixtures';
 
 test.describe('Todo App - Mobile Viewport', () => {
-  test.use({ viewport: { width: 375, height: 667 } });
+  const IPHONE_SE_VIEWPORT = { width: 375, height: 667 };
+  test.use({ viewport: IPHONE_SE_VIEWPORT });
 
   test('should add and delete a todo on mobile', async ({ todoPage }) => {
     await todoPage.addTodo('Mobile task');
