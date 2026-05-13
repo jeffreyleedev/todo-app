@@ -1,8 +1,10 @@
 import { create } from 'zustand';
+import { arrayMove } from '@dnd-kit/sortable';
 import {
   type Todo,
   type Filter,
   type Priority,
+  type TodoRepository,
   createTodo,
   toggleTodo,
   validateTodoText,
@@ -11,7 +13,7 @@ import {
 } from '@/domain';
 import { LocalStorageTodoRepository } from '@/infrastructure';
 
-const repository = new LocalStorageTodoRepository();
+const repository: TodoRepository = new LocalStorageTodoRepository();
 
 interface TodoState {
   todos: Todo[];
@@ -102,10 +104,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
       const newIndex = todos.findIndex((t) => t.id === overId);
       if (oldIndex === -1 || newIndex === -1) return;
 
-      const newTodos = [...todos];
-      const [moved] = newTodos.splice(oldIndex, 1);
-      newTodos.splice(newIndex, 0, moved);
-      saveTodos(newTodos);
+      saveTodos(arrayMove(todos, oldIndex, newIndex));
     },
   };
 });

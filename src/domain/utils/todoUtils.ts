@@ -9,23 +9,14 @@ export function updateTodoById(
   return todos.map((t) => (t.id === id ? updater(t) : t));
 }
 
-export function filterTodos(todos: Todo[], filter: Filter): Todo[] {
-  switch (filter) {
-    case 'active':
-      return todos.filter((t) => !t.completed);
-    case 'completed':
-      return todos.filter((t) => t.completed);
-    default:
-      return todos;
-  }
-}
-
-export function partitionTodos(todos: Todo[]): {
-  activeTodos: Todo[];
-  completedTodos: Todo[];
-} {
+export function partitionFilteredTodos(
+  todos: Todo[],
+  filter: Filter
+): { activeTodos: Todo[]; completedTodos: Todo[] } {
   return todos.reduce<{ activeTodos: Todo[]; completedTodos: Todo[] }>(
     (acc, t) => {
+      if (filter === 'active' && t.completed) return acc;
+      if (filter === 'completed' && !t.completed) return acc;
       if (t.completed) acc.completedTodos.push(t);
       else acc.activeTodos.push(t);
       return acc;
