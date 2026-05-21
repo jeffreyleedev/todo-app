@@ -1,4 +1,5 @@
-import type { Todo, TodoRepository } from '@/domain';
+import type { Priority, Todo, TodoRepository } from '@/domain';
+import { VALID_PRIORITIES } from '@/domain';
 
 const STORAGE_KEY = 'todos_v2'; // versioned to avoid collisions with pre-1.0 schema
 
@@ -11,7 +12,7 @@ export function isValidTodo(value: unknown): value is Todo {
     typeof t.completed === 'boolean' &&
     typeof t.createdAt === 'number' &&
     (t.priority === undefined ||
-      ['high', 'medium', 'low'].includes(t.priority as string))
+      VALID_PRIORITIES.includes(t.priority as Priority))
   );
 }
 

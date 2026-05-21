@@ -13,14 +13,18 @@ export function partitionFilteredTodos(
   todos: Todo[],
   filter: Filter
 ): { activeTodos: Todo[]; completedTodos: Todo[] } {
-  return todos.reduce<{ activeTodos: Todo[]; completedTodos: Todo[] }>(
-    (acc, t) => {
-      if (filter === 'active' && t.completed) return acc;
-      if (filter === 'completed' && !t.completed) return acc;
-      if (t.completed) acc.completedTodos.push(t);
-      else acc.activeTodos.push(t);
-      return acc;
-    },
-    { activeTodos: [], completedTodos: [] }
-  );
+  if (filter === 'active')
+    return {
+      activeTodos: todos.filter((t) => !t.completed),
+      completedTodos: [],
+    };
+  if (filter === 'completed')
+    return {
+      activeTodos: [],
+      completedTodos: todos.filter((t) => t.completed),
+    };
+  return {
+    activeTodos: todos.filter((t) => !t.completed),
+    completedTodos: todos.filter((t) => t.completed),
+  };
 }

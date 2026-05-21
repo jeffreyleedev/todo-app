@@ -60,6 +60,32 @@ describe('useAddTodo', () => {
     expect(result.current.canSubmit).toBe(true);
   });
 
+  it('showDuplicateError is false when input is empty', () => {
+    const todos = [makeTodo({ text: 'Buy milk', completed: false })];
+    const { result } = renderHook(() => useAddTodo(todos, vi.fn()));
+    expect(result.current.showDuplicateError).toBe(false);
+  });
+
+  it('showDuplicateError is false when input is whitespace-only', () => {
+    const { result } = renderHook(() => useAddTodo([], vi.fn()));
+    act(() => result.current.setText('   '));
+    expect(result.current.showDuplicateError).toBe(false);
+  });
+
+  it('showDuplicateError is true when input is a non-empty duplicate', () => {
+    const todos = [makeTodo({ text: 'Buy milk', completed: false })];
+    const { result } = renderHook(() => useAddTodo(todos, vi.fn()));
+    act(() => result.current.setText('Buy milk'));
+    expect(result.current.showDuplicateError).toBe(true);
+  });
+
+  it('showDuplicateError is false when input is unique', () => {
+    const todos = [makeTodo({ text: 'Buy milk', completed: false })];
+    const { result } = renderHook(() => useAddTodo(todos, vi.fn()));
+    act(() => result.current.setText('Buy eggs'));
+    expect(result.current.showDuplicateError).toBe(false);
+  });
+
   it('handleSubmit calls addTodo with trimmed text and resets text when canSubmit', () => {
     const addTodo = vi.fn().mockReturnValue(true);
     const { result } = renderHook(() => useAddTodo([], addTodo));

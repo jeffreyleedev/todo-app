@@ -11,7 +11,7 @@ export function AddTodo() {
   const { addTodo, todos } = useTodoStore(
     useShallow((state) => ({ addTodo: state.addTodo, todos: state.todos }))
   );
-  const { text, setText, trimmed, isDuplicate, canSubmit, handleSubmit } =
+  const { text, setText, showDuplicateError, canSubmit, handleSubmit } =
     useAddTodo(todos, addTodo);
 
   return (
@@ -39,7 +39,7 @@ export function AddTodo() {
         </Button>
       </form>
       <div className="flex items-center">
-        {isDuplicate && trimmed && (
+        {showDuplicateError && (
           <p className="font-caption text-ultraviolet" role="alert">
             Already exists.
           </p>
