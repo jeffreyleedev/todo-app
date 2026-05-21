@@ -47,6 +47,9 @@ export class TodoPage {
 
   heading = (): Locator => this.page.getByRole('heading', { name: 'My Tasks' });
 
+  themeToggle = (): Locator =>
+    this.page.getByRole('button', { name: /switch to (light|dark) mode/i });
+
   subtitle = (): Locator => this.page.getByText('Stay focused and organized.');
 
   checkIconLocator = (text: string): Locator =>
