@@ -6,7 +6,7 @@ import {
   type Priority,
   type TodoRepository,
   createTodo,
-  toggleTodo,
+  toggleTodo as applyToggle,
   validateTodoText,
   isDuplicateTodo,
   updateTodoById,
@@ -54,7 +54,7 @@ export const useTodoStore = create<TodoState>((set, get) => {
 
     toggleTodo: (id: string) => {
       const todos = get().todos;
-      saveTodos(updateTodoById(todos, id, toggleTodo));
+      saveTodos(updateTodoById(todos, id, applyToggle));
     },
 
     deleteTodo: (id: string) => {

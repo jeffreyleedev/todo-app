@@ -1,4 +1,5 @@
-import type { Todo } from '@/domain';
+import { useCallback } from 'react';
+import type { Todo, Priority } from '@/domain';
 import { useTodoStore } from '@/application';
 import { IconButton } from '@/presentation/shared/components/IconButton';
 import { Icon } from '@/presentation/shared/components/Icon';
@@ -35,6 +36,16 @@ export function TodoItem({ todo }: TodoItemProps) {
     handleKeyDown,
     handleTextKeyDown,
   } = useTodoEdit(todo, updateTodoText);
+
+  const handleSetPriority = useCallback(
+    (p?: Priority) => setPriority(todo.id, p),
+    [setPriority, todo.id]
+  );
+
+  const handleDelete = useCallback(
+    () => deleteTodo(todo.id),
+    [deleteTodo, todo.id]
+  );
 
   const {
     attributes,
@@ -123,12 +134,12 @@ export function TodoItem({ todo }: TodoItemProps) {
           {!todo.completed && !isEditing && (
             <PriorityButton
               priority={todo.priority}
-              onSetPriority={(p) => setPriority(todo.id, p)}
+              onSetPriority={handleSetPriority}
             />
           )}
           {!isEditing && (
             <IconButton
-              onClick={() => deleteTodo(todo.id)}
+              onClick={handleDelete}
               data-testid="delete-todo"
               icon="close"
               variant="error"
