@@ -27,6 +27,8 @@ export function createTodo(text: string): Todo {
   };
 }
 
+export const VALID_PRIORITIES: readonly Priority[] = ['high', 'medium', 'low'];
+
 // Two `undefined` entries: one to enter the cycle from no priority, one to exit back to none.
 const PRIORITY_CYCLE_ORDER: (Priority | undefined)[] = [
   undefined,
