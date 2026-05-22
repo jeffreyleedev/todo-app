@@ -13,10 +13,10 @@ const makeTodo = (overrides: Partial<Todo> = {}): Todo => ({
 });
 
 describe('useAddTodo', () => {
-  it('initial state: text empty, isDuplicate false, canSubmit false', () => {
+  it('initial state: text empty, showDuplicateError false, canSubmit false', () => {
     const { result } = renderHook(() => useAddTodo([], vi.fn()));
     expect(result.current.text).toBe('');
-    expect(result.current.isDuplicate).toBe(false);
+    expect(result.current.showDuplicateError).toBe(false);
     expect(result.current.canSubmit).toBe(false);
   });
 
@@ -44,19 +44,19 @@ describe('useAddTodo', () => {
     expect(result.current.canSubmit).toBe(false);
   });
 
-  it('isDuplicate true when text matches an active todo (case-insensitive)', () => {
+  it('showDuplicateError true when text matches an active todo (case-insensitive)', () => {
     const todos = [makeTodo({ text: 'Buy milk', completed: false })];
     const { result } = renderHook(() => useAddTodo(todos, vi.fn()));
     act(() => result.current.setText('BUY MILK'));
-    expect(result.current.isDuplicate).toBe(true);
+    expect(result.current.showDuplicateError).toBe(true);
     expect(result.current.canSubmit).toBe(false);
   });
 
-  it('isDuplicate false when matching todo is completed', () => {
+  it('showDuplicateError false when matching todo is completed', () => {
     const todos = [makeTodo({ text: 'Buy milk', completed: true })];
     const { result } = renderHook(() => useAddTodo(todos, vi.fn()));
     act(() => result.current.setText('Buy milk'));
-    expect(result.current.isDuplicate).toBe(false);
+    expect(result.current.showDuplicateError).toBe(false);
     expect(result.current.canSubmit).toBe(true);
   });
 
