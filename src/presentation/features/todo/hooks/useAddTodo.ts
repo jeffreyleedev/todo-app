@@ -28,7 +28,6 @@ export function useAddTodo(todos: Todo[], addTodo: (text: string) => boolean) {
     text,
     setText,
     showDuplicateError: isDuplicate && !!trimmed,
-    isDuplicate,
     canSubmit,
     handleSubmit,
   };

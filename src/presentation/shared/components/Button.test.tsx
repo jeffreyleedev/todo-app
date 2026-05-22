@@ -51,6 +51,7 @@ describe('Button', () => {
       'border-mint',
       'rounded-40'
     );
+    expect(button).toHaveClass('focus-visible:bg-focus-cyan');
   });
 
   it('should apply focus-visible classes on primary variant', () => {

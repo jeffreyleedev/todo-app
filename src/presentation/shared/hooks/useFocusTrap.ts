@@ -15,16 +15,14 @@ export function useFocusTrap(ref: RefObject<HTMLElement | null>) {
       const focusable = el.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
+      const atFirst = document.activeElement === first;
+      const atLast = document.activeElement === last;
+      if (e.shiftKey && atFirst) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && atLast) {
+        e.preventDefault();
+        first?.focus();
       }
     };
     el.addEventListener('keydown', trapTab);
