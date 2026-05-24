@@ -1,10 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
+import { useLatestRef } from './useLatestRef';
 
 export function useEscapeKey(onEscape: () => void) {
-  const onEscapeRef = useRef(onEscape);
-  useEffect(() => {
-    onEscapeRef.current = onEscape;
-  });
+  const onEscapeRef = useLatestRef(onEscape);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -12,5 +10,5 @@ export function useEscapeKey(onEscape: () => void) {
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [onEscapeRef]);
 }
